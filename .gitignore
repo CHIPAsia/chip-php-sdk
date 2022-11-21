@@ -1,0 +1,6 @@
+# vendor
+vendor/
+
+# misc
+composer.lock
+.DS_Store
