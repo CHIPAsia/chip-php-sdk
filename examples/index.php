@@ -5,12 +5,14 @@
     <span>Sample Actions:</span>
     <ul>
       <li>
-        <a href="/payment_methods.php" target="_blank">Get Payment Methods</a>
+        <a href="/api/payment_methods.php" target="_blank">Get Payment Methods</a>
       </li>
       <li>
-        <a href="/create_purchase.php" target="_blank">Create Checkout</a>
+        <a href="/api/create_purchase.php" target="_blank">Create Checkout</a>
       </li>
-      <li></li>
+      <li>
+        <a href="/api/public_key.php" target="_blank">Public Key</a>
+      </li>
     </ul>
   </body>
 </html>

@@ -1,6 +1,6 @@
-# Chip PHP library #
+# Chip PHP library
 
-## Requirements ##
+## Requirements
 
 PHP 7.2 and later.
 
@@ -10,48 +10,106 @@ The following PHP extensions are required:
 * json
 * openssl
 
-## Installation ##
+## Prerequisite
+Before you start, make sure you already have created `Brand ID` and `API Key` from your developer dashboard by logging-in into [merchant portal](https://gate.chip-in.asia/login).
 
-## Composer ##
 
-```bash
-composer install
+## Installation
+## Composer
+
+Add the following on your `composer.json`
+```php
+"repositories": [
+  ...
+  {
+      "type": "package",
+      "package": {
+          "name": "chip/chip-sdk-php",
+          "version": "v1.0.0",
+          "source": {
+              "url": "git@github.com:CHIPAsia/chip-php-sdk.git",
+              "type": "git",
+              "reference": "v1.0.0"
+          },
+          "autoload": {
+              "classmap": [
+                  "lib/"
+              ]
+          }
+      }
+  }
+]
 ```
 
-## Getting Started ##
+And run command
+```bash
+composer install
+# OR
+composer update
+```
+
+## Functions
+
+**getPaymentMethods**
+```
+Get list of payment methods that available for your account.
+```
+
+**createPurchase**
+```
+Create checkout & direct post URL.
+```
+
+**getPurchase**
+```
+Get purchase detail by its ID
+```
+
+**verify**
+```
+Verify callback or webhook response from our server. For webhook public key, it is generated when you register your webhook URL. Refer to our API (https://developer.chip-in.asia/api) for more information.
+```
+
+And more which you can refer to [`/lib/ChipApi.php`](./lib/ChipApi.php) for more information.
+
+## Getting Started
 
 Simple usage looks like:
 
 
 ```php
 <?php
-require_once 'vendor/autoload.php';
-$chip = new \Chip\ChipApi($config['brand_id'], $config['api_key'], $config['endpoint']);
-$client = new \Chip\Model\ClientDetails();
-$client->email = 'test@example.com';
-$purchase = new \Chip\Model\Purchase();
-$purchase->client = $client;
-$details = new \Chip\Model\PurchaseDetails();
-$product = new \Chip\Model\Product();
-$product->name = 'Test';
-$product->price = 100;
-$details->products = [$product];
-$purchase->purchase = $details;
-$purchase->brand_id = $config['brand_id'];
-$purchase->success_redirect = 'https://gate.chip-in.asia/api/v1/?success=1';
-$purchase->failure_redirect = 'https://gate.chip-in.asia/api/v1/?success=0';
+  require_once 'vendor/autoload.php';
+  $chip = new \Chip\ChipApi($config['brand_id'], $config['api_key'], $config['endpoint']);
+  $client = new \Chip\Model\ClientDetails();
+  $client->email = 'test@example.com';
+  $purchase = new \Chip\Model\Purchase();
+  $purchase->client = $client;
+  $details = new \Chip\Model\PurchaseDetails();
+  $product = new \Chip\Model\Product();
+  $product->name = 'Test';
+  $product->price = 100;
+  $details->products = [$product];
+  $purchase->purchase = $details;
+  $purchase->brand_id = $config['brand_id'];
+  $purchase->success_redirect = 'https://yourdomain.com/redirect.php?success=1';
+  $purchase->success_callback = 'https://yourdomain.com/callback.php?success=0';
+  $purchase->failure_redirect = 'https://yourdomain.com/redirect.php?success=0';
 
-$result = $chip->createPurchase($purchase);
+  $result = $chip->createPurchase($purchase);
 
-if ($result && $result->checkout_url) {
-	// Redirect user to checkout
-	header("Location: " . $result->checkout_url);
-	exit;
-}
+  if ($result && $result->checkout_url) {
+    // Redirect user to checkout
+    header("Location: " . $result->checkout_url);
+    exit;
+  }
 ```
 
-## Testing ##
+## Testing
 
 ```bash
 ./vendor/bin/phpunit tests 
 ```
+
+## Example
+Check our examples [here](./examples).

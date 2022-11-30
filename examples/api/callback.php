@@ -2,7 +2,7 @@
 
   require_once '../vendor/autoload.php';
 
-  $config = include('config.php');
+  $config = include('../config.php');
 
   $chip = new \Chip\ChipApi($config['brand_id'], $config['api_key'], $config['endpoint']);
 
@@ -24,7 +24,4 @@
   curl_close($curl);
 
   $verify = \Chip\ChipApi::verify($post, $xSignature, $publicKey);
-  echo $verify;
-
-  # Option 2: Use GET /purchases/<purchase_id>/ request
-  $purchase = $chip->getPurchase($post->id);
+  error_log("/callback VERIFIED: " . ($verify ? "true" : "false"));

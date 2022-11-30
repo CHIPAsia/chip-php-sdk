@@ -2,7 +2,7 @@
 
 require_once '../vendor/autoload.php';
 
-$config = include('config.php');
+$config = include('../config.php');
 
 $chip = new \Chip\ChipApi($config['brand_id'], $config['api_key'], $config['endpoint']);
 
@@ -17,9 +17,9 @@ $product->price = 100;
 $details->products = [$product];
 $purchase->purchase = $details;
 $purchase->brand_id = $config['brand_id'];
-$purchase->success_redirect = 'http://localhost:7001/redirect.php?success=1';
-$purchase->failure_redirect = 'http://localhost:7001/redirect.php?success=0';
-$purchase->success_callback = 'https://f19e-2001-f40-90f-ed2-7cc9-7c6b-95d7-d061.ap.ngrok.io/callback.php?success=1';
+$purchase->success_redirect = $config['basedUrl'] . '/api/redirect.php?success=1';
+$purchase->failure_redirect = $config['basedUrl'] . '/api/redirect.php?success=0';
+$purchase->success_callback = $config['basedUrl'] . '/api/callback.php';
 
 $result = $chip->createPurchase($purchase);
 
