@@ -38,7 +38,10 @@ Add the following on your `composer.json`
           }
       }
   }
-]
+],
+"require": {
+    "chip/chip-sdk-php": "^1.0"
+}
 ```
 
 And run command
