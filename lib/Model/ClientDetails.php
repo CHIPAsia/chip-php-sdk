@@ -2,6 +2,13 @@
 namespace Chip\Model;
 
 class ClientDetails implements \JsonSerializable {
+
+	/**
+	 *
+	 * @var string
+	 */
+	public $id;
+
 	/**
 	 *
 	 * @var string
