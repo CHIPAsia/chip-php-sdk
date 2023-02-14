@@ -131,7 +131,7 @@ class ChipApi {
 	 * @return \Chip\Model\ClientDetails
 	 */
 	public function createClient($client) {
-		return $this->mapper->map($this->request('POST', 'client/', [
+		return $this->mapper->map($this->request('POST', 'clients/', [
 			'json' => $client
 		]), new Model\ClientDetails());
 	}
