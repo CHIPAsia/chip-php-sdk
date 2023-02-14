@@ -124,6 +124,17 @@ class ChipApi {
 			]
 		]), new Model\Purchase());
 	}
+
+	/**
+	 * 
+	 * @param \Chip\Model\ClientDetails $client
+	 * @return \Chip\Model\ClientDetails
+	 */
+	public function createClient($client) {
+		return $this->mapper->map($this->request('POST', 'clients/', [
+			'json' => $client
+		]), new Model\ClientDetails());
+	}
 	
 	/**
 	 * 
