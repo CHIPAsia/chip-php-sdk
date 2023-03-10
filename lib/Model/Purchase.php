@@ -115,6 +115,12 @@ class Purchase implements \JsonSerializable {
 	 *
 	 * @var bool
 	 */
+	public $force_recurring;
+
+	/**
+	 *
+	 * @var bool
+	 */
 	public $skip_capture;
 
 	/**
