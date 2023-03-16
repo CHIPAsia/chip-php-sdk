@@ -2,7 +2,11 @@
 
 namespace Chip;
 
+use Chip\Traits\Api\Webhook;
+
 class ChipApi {
+
+	use Webhook;
 	
 	protected $brandId;
 	
