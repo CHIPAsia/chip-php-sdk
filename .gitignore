@@ -4,3 +4,6 @@ vendor/
 # misc
 composer.lock
 .DS_Store
+
+# text editor settings
+.vscode/
