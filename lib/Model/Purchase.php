@@ -169,7 +169,7 @@ class Purchase implements \JsonSerializable {
 	 *
 	 * @var string[]
 	 */
-	public $payment_methods_whitelist;
+	public $payment_method_whitelist;
 
 	/**
 	 *
