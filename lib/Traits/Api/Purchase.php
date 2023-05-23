@@ -106,4 +106,18 @@ trait Purchase
 		}
 		return $this->mapper->map($this->request('POST', "purchases/$purchaseId/refund/", $options), new ModelPurchase());
 	}
+
+	/**
+	 * 
+	 * @param string $purchaseId
+	 * @return \Chip\Model\Purchase
+	 */
+	public function markAsPaid(string $purchaseId): ModelPurchase
+	{
+		return $this->mapper->map($this->request('POST', "/purchases/$purchaseId/mark_as_paid/", [
+			'json' => [
+				"paid_on" => 0
+			]
+		]), new ModelPurchase());
+	}
 }
