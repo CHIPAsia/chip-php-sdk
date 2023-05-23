@@ -110,14 +110,17 @@ trait Purchase
 	/**
 	 * 
 	 * @param string $purchaseId
+	 * @param int $utcTimestamp
 	 * @return \Chip\Model\Purchase
 	 */
-	public function markAsPaid(string $purchaseId): ModelPurchase
+	public function markAsPaid(string $purchaseId, int $utcTimestamp = null): ModelPurchase
 	{
-		return $this->mapper->map($this->request('POST', "/purchases/$purchaseId/mark_as_paid/", [
-			'json' => [
-				"paid_on" => 0
-			]
-		]), new ModelPurchase());
+		$options = [];
+		if ($utcTimestamp !== null) {
+			$options['json'] = [
+				'paid_on' => $utcTimestamp
+			];
+		}
+		return $this->mapper->map($this->request('POST', "/purchases/$purchaseId/mark_as_paid/", $options), new ModelPurchase());
 	}
 }
