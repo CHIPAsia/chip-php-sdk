@@ -2,7 +2,7 @@
 
 ## Requirements
 
-PHP 7.2 and later.
+PHP 8.0 and later.
 
 The following PHP extensions are required:
 
