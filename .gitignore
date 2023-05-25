@@ -7,3 +7,5 @@ composer.lock
 
 # text editor settings
 .vscode/
+.env
+composer.phar

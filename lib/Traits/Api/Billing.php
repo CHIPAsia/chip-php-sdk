@@ -81,7 +81,7 @@ trait Billing
 	 */
 	public function sendBillingTemplateInvoice(string $billingTemplateId, ModelBillingTemplateClient $billingTemplateClient): ModelPurchase
 	{
-		return $this->mapper->map($this->request('POST', "/billing_templates/$billingTemplateId/send_invoice/", [
+		return $this->mapper->map($this->request('POST', "billing_templates/$billingTemplateId/send_invoice/", [
 			'json' => $billingTemplateClient
 		]), new ModelBillingTemplateClient());
 	}
@@ -93,7 +93,7 @@ trait Billing
 	 */
 	public function addBillingTemplateSubscriber(string $billingTemplateId, ModelBillingTemplateClient $billingTemplateClient): ModelBillingTemplateClient
 	{
-		return $this->mapper->map($this->request('POST', "/billing_templates/$billingTemplateId/add_subscriber/", [
+		return $this->mapper->map($this->request('POST', "billing_templates/$billingTemplateId/add_subscriber/", [
 			'json' => $billingTemplateClient
 		]), new ModelBillingTemplateClient());
 	}
@@ -105,7 +105,7 @@ trait Billing
 	 */
 	public function getBillingTemplateClient(string $billingTemplateId): ModelBillingTemplateClient
 	{
-		return $this->mapper->map($this->request('GET', "/billing_templates/$billingTemplateId/clients/"), new ModelBillingTemplateClient());
+		return $this->mapper->map($this->request('GET', "billing_templates/$billingTemplateId/clients/"), new ModelBillingTemplateClient());
 	}
 
 	/**
@@ -115,7 +115,7 @@ trait Billing
 	 */
 	public function getAllBillingTemplateClient(string $billingTemplateId): ModelBillingTemplateClient
 	{
-		return $this->mapper->map($this->request('GET', "/billing_templates/$billingTemplateId/clients/"), new ModelBillingTemplateClient());
+		return $this->mapper->map($this->request('GET', "billing_templates/$billingTemplateId/clients/"), new ModelBillingTemplateClient());
 	}
 
 	/**
@@ -123,9 +123,9 @@ trait Billing
 	 * @param \Chip\Model\BillingTemplateClient $billingTemplateClient
 	 * @return \Chip\Model\BillingTemplateClient
 	 */
-	public function getBillingTemplateClient(string $billingTemplateId, string $clientId): ModelBillingTemplateClient
+	public function getBillingTemplateClientDetails(string $billingTemplateId, string $clientId): ModelBillingTemplateClient
 	{
-		return $this->mapper->map($this->request('GET', "/billing_templates/$billingTemplateId/clients/$clientId"), new ModelBillingTemplateClient());
+		return $this->mapper->map($this->request('GET', "billing_templates/$billingTemplateId/clients/$clientId"), new ModelBillingTemplateClient());
 	}
 
 	/**
@@ -135,7 +135,7 @@ trait Billing
 	 */
 	public function updateBillingTemplateClient(string $billingTemplateId, string $clientId): ModelBillingTemplateClient
 	{
-		return $this->mapper->map($this->request('PATCH', "/billing_templates/$billingTemplateId/clients/$clientId"), new ModelBillingTemplateClient());
+		return $this->mapper->map($this->request('PATCH', "billing_templates/$billingTemplateId/clients/$clientId"), new ModelBillingTemplateClient());
 	}
 
 }

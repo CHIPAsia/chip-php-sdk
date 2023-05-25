@@ -1,7 +1,7 @@
 <?php
 namespace Chip\Model;
 
-class Billing implements \JsonSerializable {
+class BillingTemplateClient implements \JsonSerializable {
 
 	/**
 	 *

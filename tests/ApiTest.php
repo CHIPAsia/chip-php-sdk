@@ -6,7 +6,9 @@ use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 
-final class ApiTest extends TestCase
+use Chip\Model\Purchase as ModelPurchase;
+
+class ApiTest extends TestCase
 {
 	public function testRefundWithoutAmount() {
 		$container = [];
@@ -58,7 +60,8 @@ final class ApiTest extends TestCase
 		$api = $this->getMockApi(new MockHandler([
 			new Response(200, [], '{}')
 		]), $history);
-		$api->createPurchase([]);
+		$model = new ModelPurchase();
+		$api->createPurchase($model);
 		$transaction = $container[0];
 		
 		$this->assertEquals('POST', $transaction['request']->getMethod());
@@ -169,10 +172,24 @@ final class ApiTest extends TestCase
 		$this->assertTrue(\Chip\ChipApi::verify($content, $signature, $publicKey));
 	}
 	
+	public function testMarkAsPaid() {
+		$container = [];
+		$history = Middleware::history($container);
+		$api = $this->getMockApi(new MockHandler([
+			new Response(200, [], '{}')
+		]), $history);
+		$api->markAsPaid(123);
+		$transaction = $container[0];
+
+		$this->assertEquals('POST', $transaction['request']->getMethod());
+		$this->assertStringContainsString('purchases/123/mark_as_paid/', $transaction['request']->getUri()->getPath());
+	}
+	
 	protected function getMockApi($mock, $history) {
+		$env = parse_ini_file('.env');
 		$handlerStack = HandlerStack::create($mock);
 		$handlerStack->push($history);
-		return new \Chip\ChipApi('', '', 'https://gate.chip-in.asia/api/v1/', [
+		return new \Chip\ChipApi($env["BRAND_ID"], $env["API_KEY"], 'https://gate.chip-in.asia/api/v1/', [
 			'handler' => $handlerStack
 		]);
 	}
