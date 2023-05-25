@@ -4,8 +4,11 @@ namespace Chip\Traits\Api;
 
 use Chip\Model\Billing as ModelBilling;
 use Chip\Model\BillingTemplate as ModelBillingTemplate;
+use Chip\Model\BillingTemplates as ModelBillingTemplates;
 use Chip\Model\BillingTemplateClient as ModelBillingTemplateClient;
+use Chip\Model\BillingTemplateClients as ModelBillingTemplateClients;
 use Chip\Model\Purchase as ModelPurchase;
+
 
 trait Billing
 {
@@ -38,9 +41,9 @@ trait Billing
 	 * @param string $billingTemplateId
 	 * @return \Chip\Model\BillingTemplate
 	 */
-	public function getAllBillingTemplate(): ModelBillingTemplate
+	public function getAllBillingTemplate(): ModelBillingTemplates
 	{
-		return $this->mapper->map($this->request('GET', "billing_templates/"), new ModelBillingTemplate());
+		return $this->mapper->map($this->request('GET', "billing_templates/"), new ModelBillingTemplates());
 	}
 	
 	/**
@@ -103,19 +106,9 @@ trait Billing
 	 * @param \Chip\Model\BillingTemplateClient $billingTemplateClient
 	 * @return \Chip\Model\BillingTemplateClient
 	 */
-	public function getBillingTemplateClient(string $billingTemplateId): ModelBillingTemplateClient
+	public function getAllBillingTemplateClient(string $billingTemplateId): ModelBillingTemplateClients
 	{
-		return $this->mapper->map($this->request('GET', "billing_templates/$billingTemplateId/clients/"), new ModelBillingTemplateClient());
-	}
-
-	/**
-	 * 
-	 * @param \Chip\Model\BillingTemplateClient $billingTemplateClient
-	 * @return \Chip\Model\BillingTemplateClient
-	 */
-	public function getAllBillingTemplateClient(string $billingTemplateId): ModelBillingTemplateClient
-	{
-		return $this->mapper->map($this->request('GET', "billing_templates/$billingTemplateId/clients/"), new ModelBillingTemplateClient());
+		return $this->mapper->map($this->request('GET', "billing_templates/$billingTemplateId/clients/"), new ModelBillingTemplateClients());
 	}
 
 	/**
