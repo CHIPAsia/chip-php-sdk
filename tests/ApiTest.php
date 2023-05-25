@@ -10,17 +10,19 @@ use Chip\Model\Purchase as ModelPurchase;
 
 class ApiTest extends TestCase
 {
+	public $purchase_id = "14483a7f-2bde-4e9d-a3d2-ffa6e09e72d7";
+
 	public function testRefundWithoutAmount() {
 		$container = [];
 		$history = Middleware::history($container);
 		$api = $this->getMockApi(new MockHandler([
 			new Response(200, [], '{}')
 		]), $history);
-		$api->refundPurchase(123);
+		$api->refundPurchase($this->purchase_id);
 		$transaction = $container[0];
 		
 		$this->assertEquals('POST', $transaction['request']->getMethod());
-		$this->assertStringContainsString('purchases/123/refund', $transaction['request']->getUri()->getPath());
+		$this->assertStringContainsString("purchases/$this->purchase_id/refund", $transaction['request']->getUri()->getPath());
 		$this->assertEmpty($transaction['request']->getBody()->getContents());
 	}
 	
@@ -30,11 +32,11 @@ class ApiTest extends TestCase
 		$api = $this->getMockApi(new MockHandler([
 			new Response(200, [], '{}')
 		]), $history);
-		$api->refundPurchase(123, 100);
+		$api->refundPurchase($this->purchase_id, 100);
 		$transaction = $container[0];
 		
 		$this->assertEquals('POST', $transaction['request']->getMethod());
-		$this->assertStringContainsString('purchases/123/refund', $transaction['request']->getUri()->getPath());
+		$this->assertStringContainsString("purchases/$this->purchase_id/refund", $transaction['request']->getUri()->getPath());
 		$body = json_decode($transaction['request']->getBody()->getContents(), true);
 		$this->assertEquals(100, $body['amount']);
 	}
@@ -74,11 +76,11 @@ class ApiTest extends TestCase
 		$api = $this->getMockApi(new MockHandler([
 			new Response(200, [], '{}')
 		]), $history);
-		$api->getPurchase(123);
+		$api->getPurchase($this->purchase_id);
 		$transaction = $container[0];
 		
 		$this->assertEquals('GET', $transaction['request']->getMethod());
-		$this->assertStringContainsString('purchases/123/', $transaction['request']->getUri()->getPath());
+		$this->assertStringContainsString("purchases/$this->purchase_id/", $transaction['request']->getUri()->getPath());
 	}
 	
 	public function testCancelPurchase() {
@@ -87,11 +89,11 @@ class ApiTest extends TestCase
 		$api = $this->getMockApi(new MockHandler([
 			new Response(200, [], '{}')
 		]), $history);
-		$api->cancelPurchase(123);
+		$api->cancelPurchase($this->purchase_id);
 		$transaction = $container[0];
 		
 		$this->assertEquals('POST', $transaction['request']->getMethod());
-		$this->assertStringContainsString('purchases/123/cancel', $transaction['request']->getUri()->getPath());
+		$this->assertStringContainsString("purchases/$this->purchase_id/cancel", $transaction['request']->getUri()->getPath());
 	}
 	
 	public function testRelasePurchase() {
@@ -100,11 +102,11 @@ class ApiTest extends TestCase
 		$api = $this->getMockApi(new MockHandler([
 			new Response(200, [], '{}')
 		]), $history);
-		$api->releasePurchase(123);
+		$api->releasePurchase($this->purchase_id);
 		$transaction = $container[0];
 		
 		$this->assertEquals('POST', $transaction['request']->getMethod());
-		$this->assertStringContainsString('purchases/123/release', $transaction['request']->getUri()->getPath());
+		$this->assertStringContainsString("purchases/$this->purchase_id/release", $transaction['request']->getUri()->getPath());
 	}
 	
 	public function testCaptureWithoutAmount() {
@@ -113,11 +115,11 @@ class ApiTest extends TestCase
 		$api = $this->getMockApi(new MockHandler([
 			new Response(200, [], '{}')
 		]), $history);
-		$api->capturePurchase(123);
+		$api->capturePurchase($this->purchase_id);
 		$transaction = $container[0];
 		
 		$this->assertEquals('POST', $transaction['request']->getMethod());
-		$this->assertStringContainsString('purchases/123/capture', $transaction['request']->getUri()->getPath());
+		$this->assertStringContainsString("purchases/$this->purchase_id/capture", $transaction['request']->getUri()->getPath());
 		$this->assertEmpty($transaction['request']->getBody()->getContents());
 	}
 	
@@ -127,11 +129,11 @@ class ApiTest extends TestCase
 		$api = $this->getMockApi(new MockHandler([
 			new Response(200, [], '{}')
 		]), $history);
-		$api->capturePurchase(123, 100);
+		$api->capturePurchase($this->purchase_id, 100);
 		$transaction = $container[0];
 		
 		$this->assertEquals('POST', $transaction['request']->getMethod());
-		$this->assertStringContainsString('purchases/123/capture', $transaction['request']->getUri()->getPath());
+		$this->assertStringContainsString("purchases/$this->purchase_id/capture", $transaction['request']->getUri()->getPath());
 		$body = json_decode($transaction['request']->getBody()->getContents(), true);
 		$this->assertEquals(100, $body['amount']);
 	}
@@ -142,11 +144,11 @@ class ApiTest extends TestCase
 		$api = $this->getMockApi(new MockHandler([
 			new Response(200, [], '{}')
 		]), $history);
-		$api->chargePurchase(123, 'token');
+		$api->chargePurchase($this->purchase_id, 'token');
 		$transaction = $container[0];
 		
 		$this->assertEquals('POST', $transaction['request']->getMethod());
-		$this->assertStringContainsString('purchases/123/charge', $transaction['request']->getUri()->getPath());
+		$this->assertStringContainsString("purchases/$this->purchase_id/charge", $transaction['request']->getUri()->getPath());
 		$body = json_decode($transaction['request']->getBody()->getContents(), true);
 		$this->assertEquals('token', $body['recurring_token']);
 	}
@@ -157,11 +159,11 @@ class ApiTest extends TestCase
 		$api = $this->getMockApi(new MockHandler([
 			new Response(200, [], '{}')
 		]), $history);
-		$api->deleteRecurringToken(123);
+		$api->deleteRecurringToken($this->purchase_id);
 		$transaction = $container[0];
 		
 		$this->assertEquals('POST', $transaction['request']->getMethod());
-		$this->assertStringContainsString('purchases/123/delete_recurring_token', $transaction['request']->getUri()->getPath());
+		$this->assertStringContainsString("purchases/$this->purchase_id/delete_recurring_token", $transaction['request']->getUri()->getPath());
 	}
 	
 	public function testVerify() {
@@ -178,11 +180,11 @@ class ApiTest extends TestCase
 		$api = $this->getMockApi(new MockHandler([
 			new Response(200, [], '{}')
 		]), $history);
-		$api->markAsPaid(123);
+		$api->markAsPaid($this->purchase_id);
 		$transaction = $container[0];
 
 		$this->assertEquals('POST', $transaction['request']->getMethod());
-		$this->assertStringContainsString('purchases/123/mark_as_paid/', $transaction['request']->getUri()->getPath());
+		$this->assertStringContainsString("purchases/$this->purchase_id/mark_as_paid/", $transaction['request']->getUri()->getPath());
 	}
 	
 	protected function getMockApi($mock, $history) {

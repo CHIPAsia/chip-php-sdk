@@ -20,41 +20,41 @@ trait Purchase
 	
 	/**
 	 * 
-	 * @param int $purchaseId
+	 * @param string $purchaseId
 	 * @return \Chip\Model\Purchase
 	 */
-	public function getPurchase(int $purchaseId): ModelPurchase
+	public function getPurchase(string $purchaseId): ModelPurchase
 	{
 		return $this->mapper->map($this->request('GET', "purchases/$purchaseId/"), new ModelPurchase());
 	}
 	
 	/**
 	 * 
-	 * @param int $purchaseId
+	 * @param string $purchaseId
 	 * @return \Chip\Model\Purchase
 	 */
-	public function cancelPurchase(int $purchaseId): ModelPurchase
+	public function cancelPurchase(string $purchaseId): ModelPurchase
 	{
 		return $this->mapper->map($this->request('POST', "purchases/$purchaseId/cancel/"), new ModelPurchase());
 	}
 	
 	/**
 	 * 
-	 * @param int $purchaseId
+	 * @param string $purchaseId
 	 * @return \Chip\Model\Purchase
 	 */
-	public function releasePurchase(int $purchaseId): ModelPurchase
+	public function releasePurchase(string $purchaseId): ModelPurchase
 	{
 		return $this->mapper->map($this->request('POST', "purchases/$purchaseId/release/"), new ModelPurchase());
 	}
 	
 	/**
 	 * 
-	 * @param int $purchaseId
+	 * @param string $purchaseId
 	 * @param int $amount
 	 * @return \Chip\Model\Purchase
 	 */
-	public function capturePurchase(int $purchaseId, int $amount = null): ModelPurchase
+	public function capturePurchase(string $purchaseId, int $amount = null): ModelPurchase
 	{
 		$options = [];
 		if ($amount !== null) {
@@ -67,11 +67,11 @@ trait Purchase
 	
 	/**
 	 * 
-	 * @param int $purchaseId
+	 * @param string $purchaseId
 	 * @param string $token
 	 * @return \Chip\Model\Purchase
 	 */
-	public function chargePurchase(int $purchaseId, string $token): ModelPurchase
+	public function chargePurchase(string $purchaseId, string $token): ModelPurchase
 	{
 		return $this->mapper->map($this->request('POST', "purchases/$purchaseId/charge/", [
 			'json' => [
@@ -82,21 +82,21 @@ trait Purchase
 
 	/**
 	 * 
-	 * @param int $purchaseId
+	 * @param string $purchaseId
 	 * @return \Chip\Model\Purchase
 	 */
-	public function deleteRecurringToken(int $purchaseId): ModelPurchase
+	public function deleteRecurringToken(string $purchaseId): ModelPurchase
 	{
 		return $this->mapper->map($this->request('POST', "purchases/$purchaseId/delete_recurring_token/"), new ModelPurchase());
 	}
 	
 	/**
 	 * 
-	 * @param int $purchaseId
+	 * @param string $purchaseId
 	 * @param int $amount
 	 * @return \Chip\Model\Purchase
 	 */
-	public function refundPurchase(int $purchaseId, int $amount = null): ModelPurchase
+	public function refundPurchase(string $purchaseId, int $amount = null): ModelPurchase
 	{
 		$options = [];
 		if ($amount !== null) {
@@ -109,11 +109,11 @@ trait Purchase
 
 	/**
 	 * 
-	 * @param int $purchaseId
+	 * @param string $purchaseId
 	 * @param int $utcTimestamp
 	 * @return \Chip\Model\Purchase
 	 */
-	public function markAsPaid(int $purchaseId, int $utcTimestamp = null): ModelPurchase
+	public function markAsPaid(string $purchaseId, int $utcTimestamp = null): ModelPurchase
 	{
 		$options = [];
 		if ($utcTimestamp !== null) {
