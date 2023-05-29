@@ -2,133 +2,111 @@
 
 namespace Chip\Traits\Api;
 
-use Chip\Model\Billing as ModelBilling;
-use Chip\Model\BillingTemplate as ModelBillingTemplate;
-use Chip\Model\BillingTemplates as ModelBillingTemplates;
-use Chip\Model\BillingTemplateClient as ModelBillingTemplateClient;
-use Chip\Model\BillingTemplateClients as ModelBillingTemplateClients;
-use Chip\Model\Purchase as ModelPurchase;
-
+use Chip\Model\Billing\BillingTemplate;
+use Chip\Model\Billing\BillingTemplateClient;
+use Chip\Model\Billing\BillingTemplateClientList;
+use Chip\Model\Billing\BillingTemplateList;
+use Chip\Model\Purchase;
 
 trait Billing
 {
 	/**
-	 * 
-	 * @param \Chip\Model\Billing $billing
-	 * @return \Chip\Model\Billing
+	 * Send an invoice to one or several clients.
 	 */
-	public function createBilling(ModelBilling $billing): ModelBilling
+	public function createBilling(BillingTemplate $billing)
 	{
-		return $this->mapper->map($this->request('POST', 'billing/', [
+		return $this->request('POST', 'billing/', [
 			'json' => $billing
-		]), new ModelBilling());
+		]);
 	}
 
 	/**
-	 * 
-	 * @param \Chip\Model\BillingTemplate $billingTemplate
-	 * @return \Chip\Model\BillingTemplate
+	 * Create a template to issue repeated invoices from in the future, with or without a subscription.
 	 */
-	public function createBillingTemplate(ModelBillingTemplate $billingTemplate): ModelBillingTemplate
+	public function createBillingTemplate(BillingTemplate $billing)
 	{
 		return $this->mapper->map($this->request('POST', 'billing_templates/', [
-			'json' => $billingTemplate
-		]), new ModelBillingTemplate());
-	}
-	
-	/**
-	 * 
-	 * @param string $billingTemplateId
-	 * @return \Chip\Model\BillingTemplate
-	 */
-	public function getAllBillingTemplate(): ModelBillingTemplates
-	{
-		return $this->mapper->map($this->request('GET', "billing_templates/"), new ModelBillingTemplates());
-	}
-	
-	/**
-	 * 
-	 * @param string $billingTemplateId
-	 * @return \Chip\Model\BillingTemplate
-	 */
-	public function getBillingTemplate(string $billingTemplateId): ModelBillingTemplate
-	{
-		return $this->mapper->map($this->request('GET', "billing_templates/$billingTemplateId/"), new ModelBillingTemplate());
-	}
-	
-	/**
-	 * 
-	 * @param \Chip\Model\BillingTemplate $billingTemplate
-	 * @param string $billingTemplateId
-	 * @return \Chip\Model\BillingTemplate
-	 */
-	public function updateBillingTemplate(string $billingTemplateId, ModelBillingTemplate $billingTemplate): ModelBillingTemplate
-	{
-		return $this->mapper->map($this->request('PUT', "billing_templates/$billingTemplateId/"), new ModelBillingTemplate());
-	}
-	
-	/**
-	 * 
-	 * @param string $billingTemplateId
-	 * @return \Chip\Model\BillingTemplate
-	 */
-	public function deleteBillingTemplate(string $billingTemplateId): ModelBillingTemplate
-	{
-		return $this->mapper->map($this->request('DELETE', "billing_templates/$billingTemplateId/"), new ModelBillingTemplate());
+			'json' => $billing
+		]), new BillingTemplate());
 	}
 
 	/**
-	 * 
-	 * @param \Chip\Model\BillingTemplateClient $billingTemplateClient
-	 * @return \Chip\Model\BillingTemplateClient
+	 * List all billing templates.
 	 */
-	public function sendBillingTemplateInvoice(string $billingTemplateId, ModelBillingTemplateClient $billingTemplateClient): ModelPurchase
+	public function getBillingTemplates()
 	{
-		return $this->mapper->map($this->request('POST', "billing_templates/$billingTemplateId/send_invoice/", [
+		return $this->mapper->map($this->request('GET', 'billing_templates/'), new BillingTemplateList());
+	}
+
+	/**
+	 * Retrieve a billing template by ID.
+	 */
+	public function getBillingTemplate(string $billing_id)
+	{
+		return $this->mapper->map($this->request('GET', "billing_templates/$billing_id/"), new BillingTemplate());
+	}
+
+	/**
+	 * Update a billing template by ID.
+	 */
+	public function updateBillingTemplate(string $billing_id, BillingTemplate $billing)
+	{
+		return $this->mapper->map($this->request('PUT', "billing_templates/$billing_id/", [
+			'json' => $billing
+		]), new BillingTemplate());
+	}
+
+	/**
+	 * Delete a billing template by ID.
+	 */
+	public function deleteBillingTemplate(string $billing_id)
+	{
+		return $this->mapper->map($this->request('DELETE', "billing_templates/$billing_id/"));
+	}
+
+	/**
+	 * Send an invoice, generating a purchase from billing template data.
+	 */
+	public function sendBillingTemplateInvoice(string $billing_id, BillingTemplateClient $billingTemplateClient)
+	{
+		return $this->mapper->map($this->request('POST', "billing_templates/$billing_id/send_invoice/", [
 			'json' => $billingTemplateClient
-		]), new ModelBillingTemplateClient());
+		]), new Purchase());
 	}
 
 	/**
-	 * 
-	 * @param \Chip\Model\BillingTemplateClient $billingTemplateClient
-	 * @return \Chip\Model\BillingTemplateClient
+	 * Add a billing template client and activate recurring billing (is_subscription: true).
 	 */
-	public function addBillingTemplateSubscriber(string $billingTemplateId, ModelBillingTemplateClient $billingTemplateClient): ModelBillingTemplateClient
+	public function addBillingTemplateSubscriber(string $billing_id, BillingTemplateClient $billingTemplateClient)
 	{
-		return $this->mapper->map($this->request('POST', "billing_templates/$billingTemplateId/add_subscriber/", [
+		return $this->mapper->map($this->request('POST', "billing_templates/$billing_id/add_subscriber/", [
 			'json' => $billingTemplateClient
-		]), new ModelBillingTemplateClient());
+		]), new BillingTemplateClient());
 	}
 
 	/**
-	 * 
-	 * @param \Chip\Model\BillingTemplateClient $billingTemplateClient
-	 * @return \Chip\Model\BillingTemplateClient
+	 * List all billing template clients for this billing template.
 	 */
-	public function getAllBillingTemplateClient(string $billingTemplateId): ModelBillingTemplateClients
+	public function getBillingTemplateClients(string $billing_id)
 	{
-		return $this->mapper->map($this->request('GET', "billing_templates/$billingTemplateId/clients/"), new ModelBillingTemplateClients());
+		return $this->mapper->map($this->request('GET', "billing_templates/$billing_id/clients/"), new BillingTemplateClientList());
 	}
 
 	/**
-	 * 
-	 * @param \Chip\Model\BillingTemplateClient $billingTemplateClient
-	 * @return \Chip\Model\BillingTemplateClient
+	 * Retrieve a billing template client by client's ID.
 	 */
-	public function getBillingTemplateClientDetails(string $billingTemplateId, string $clientId): ModelBillingTemplateClient
+	public function getBillingTemplateClient(string $billing_id, string $billing_client_id)
 	{
-		return $this->mapper->map($this->request('GET', "billing_templates/$billingTemplateId/clients/$clientId"), new ModelBillingTemplateClient());
+		return $this->mapper->map($this->request('GET', "billing_templates/$billing_id/clients/$billing_client_id/"), new BillingTemplateClient());
 	}
 
 	/**
-	 * 
-	 * @param \Chip\Model\BillingTemplateClient $billingTemplateClient
-	 * @return \Chip\Model\BillingTemplateClient
+	 * Partially update a billing template client by client's ID.
 	 */
-	public function updateBillingTemplateClient(string $billingTemplateId, string $clientId): ModelBillingTemplateClient
+	public function updateBillingTemplateClient(string $billing_id, string $billing_client_id, BillingTemplateClient $billingTemplateClient)
 	{
-		return $this->mapper->map($this->request('PATCH', "billing_templates/$billingTemplateId/clients/$clientId"), new ModelBillingTemplateClient());
+		return $this->mapper->map($this->request('PATCH', "billing_templates/$billing_id/clients/$billing_client_id/", [
+			'json' => $billingTemplateClient
+		]), new BillingTemplateClient());
 	}
-
 }
