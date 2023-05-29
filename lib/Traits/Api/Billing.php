@@ -4,6 +4,7 @@ namespace Chip\Traits\Api;
 
 use Chip\Model\Billing\BillingTemplate;
 use Chip\Model\Billing\BillingTemplateClient;
+use Chip\Model\Billing\BillingTemplateClientAddSubscriber;
 use Chip\Model\Billing\BillingTemplateClientList;
 use Chip\Model\Billing\BillingTemplateList;
 use Chip\Model\Purchase;
@@ -61,7 +62,7 @@ trait Billing
 	 */
 	public function deleteBillingTemplate(string $billing_id)
 	{
-		return $this->mapper->map($this->request('DELETE', "billing_templates/$billing_id/"));
+		return $this->request('DELETE', "billing_templates/$billing_id/");
 	}
 
 	/**
@@ -81,7 +82,7 @@ trait Billing
 	{
 		return $this->mapper->map($this->request('POST', "billing_templates/$billing_id/add_subscriber/", [
 			'json' => $billingTemplateClient
-		]), new BillingTemplateClient());
+		]), new BillingTemplateClientAddSubscriber());
 	}
 
 	/**
