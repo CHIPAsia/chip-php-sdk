@@ -3,6 +3,7 @@
 namespace Chip\Traits\Api;
 
 use Chip\Model\ClientDetails as ModelClientDetails;
+use Chip\Model\ClientList;
 
 trait Client
 {
@@ -16,5 +17,10 @@ trait Client
 		return $this->mapper->map($this->request('POST', 'clients/', [
 			'json' => $client
 		]), new ModelClientDetails());
+	}
+
+	public function getClients()
+	{
+		return $this->mapper->map($this->request('GET', 'clients/'), new ClientList());
 	}
 }
