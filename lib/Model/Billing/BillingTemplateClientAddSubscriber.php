@@ -6,15 +6,15 @@ class BillingTemplateClientAddSubscriber implements \JsonSerializable
 {
 
   /**
-   *
-   * @var BillingTemplateClient
-   */
+  *
+  * @var \Chip\Model\Billing\BillingTemplateClient
+  */
   public $billing_template_client;
 
   /**
-   *
-   * @var Purchase
-   */
+  *
+  * @var \Chip\Model\Purchase
+  */
   public $purchase;
 
   #[\ReturnTypeWillChange]
