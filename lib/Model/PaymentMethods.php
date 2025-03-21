@@ -32,7 +32,7 @@ class PaymentMethods implements \JsonSerializable {
 	 */
 	public $card_methods;
 
-  /**
+	/**
 	 *
 	 * @var array
 	 */
