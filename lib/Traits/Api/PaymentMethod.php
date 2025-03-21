@@ -11,7 +11,7 @@ trait PaymentMethod
 	 * @param string $currency
 	 * @return \Chip\Model\PaymentMethods
 	 */
-	public function getPaymentMethods(string $currency = 'EUR'): ModelPaymentMethods
+	public function getPaymentMethods(string $currency = 'MYR'): ModelPaymentMethods
 	{
 		return $this->mapper->map($this->request('GET', 'payment_methods/', [
 			'query' => [

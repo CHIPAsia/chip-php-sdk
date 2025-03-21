@@ -54,7 +54,7 @@ trait Purchase
 	 * @param int $amount
 	 * @return \Chip\Model\Purchase
 	 */
-	public function capturePurchase(string $purchaseId, int $amount = null): ModelPurchase
+	public function capturePurchase(string $purchaseId, ?int $amount = null): ModelPurchase
 	{
 		$options = [];
 		if ($amount !== null) {
@@ -96,7 +96,7 @@ trait Purchase
 	 * @param int $amount
 	 * @return \Chip\Model\Purchase
 	 */
-	public function refundPurchase(string $purchaseId, int $amount = null): ModelPurchase
+	public function refundPurchase(string $purchaseId, ?int $amount = null): ModelPurchase
 	{
 		$options = [];
 		if ($amount !== null) {
@@ -113,7 +113,7 @@ trait Purchase
 	 * @param int $utcTimestamp
 	 * @return \Chip\Model\Purchase
 	 */
-	public function markAsPaid(string $purchaseId, int $utcTimestamp = null): ModelPurchase
+	public function markAsPaid(string $purchaseId, ?int $utcTimestamp = null): ModelPurchase
 	{
 		$options = [];
 		if ($utcTimestamp !== null) {
