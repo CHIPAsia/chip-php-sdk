@@ -2,9 +2,10 @@
     "name": "chip/chip-sdk-php",
     "type": "library",
     "require": {
-        "php": ">=7.2.0",
+        "php": "^8.0",
         "guzzlehttp/guzzle": "^7.0",
-        "netresearch/jsonmapper": "^4.0"
+        "netresearch/jsonmapper": "^4.0",
+        "psr/log": "^3.0"
     },
     "license": "MIT",
 	"autoload": {
@@ -13,6 +14,19 @@
         }
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.0"
+        "phpunit/phpunit": "^9.0",
+        "phpstan/phpstan": "^1.10",
+        "friendsofphp/php-cs-fixer": "^3.0"
+    },
+    "scripts": {
+        "test": "phpunit tests",
+        "phpstan": "phpstan analyse",
+        "cs-fix": "php-cs-fixer fix",
+        "cs-check": "php-cs-fixer fix --dry-run --diff"
+    },
+    "config": {
+        "platform": {
+            "php": "8.0.0"
+        }
     }
 }
