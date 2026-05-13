@@ -27,4 +27,14 @@ trait Webhook
 	{
 		return $this->mapper->map($this->request('GET', "webhooks/$webhookId/"), new ModelWebHook());
 	}
+
+	/**
+	 * 
+	 * @param string $webhookId
+	 * @return mixed
+	 */
+	public function deleteWebhook(string $webhookId): mixed
+	{
+		return $this->request('DELETE', "webhooks/$webhookId/");
+	}
 }

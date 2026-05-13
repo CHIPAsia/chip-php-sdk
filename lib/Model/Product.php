@@ -30,6 +30,13 @@ class Product implements \JsonSerializable {
 	
   #[\ReturnTypeWillChange]
 	public function jsonSerialize() {
-		return array_filter((array) $this);
+		return array_filter((array) $this, array($this, 'allow_non_null'));
+	}
+
+	private function allow_non_null($var) {
+		if (is_null($var)){
+			return false;
+		}
+		return true;
 	}
 }

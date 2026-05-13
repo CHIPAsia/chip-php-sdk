@@ -6,6 +6,8 @@ use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 
+use Chip\Model\Purchase as ModelPurchase;
+
 final class ApiTest extends TestCase
 {
 	public function testRefundWithoutAmount(): void {
@@ -316,6 +318,34 @@ final class ApiTest extends TestCase
 		$this->assertStringContainsString('webhooks/wh_123/', $transaction['request']->getUri()->getPath());
 	}
 
+	public function testMarkAsPaid(): void {
+		$container = [];
+		$history = Middleware::history($container);
+		$api = $this->getMockApi(new MockHandler([
+			new Response(200, [], '{}')
+		]), $history);
+		$api->markAsPaid('123');
+		$transaction = $container[0];
+
+		$this->assertEquals('POST', $transaction['request']->getMethod());
+		$this->assertStringContainsString('purchases/123/mark_as_paid/', $transaction['request']->getUri()->getPath());
+	}
+
+	public function testMarkAsPaidWithTimestamp(): void {
+		$container = [];
+		$history = Middleware::history($container);
+		$api = $this->getMockApi(new MockHandler([
+			new Response(200, [], '{}')
+		]), $history);
+		$api->markAsPaid('123', 1642060235);
+		$transaction = $container[0];
+
+		$this->assertEquals('POST', $transaction['request']->getMethod());
+		$this->assertStringContainsString('purchases/123/mark_as_paid/', $transaction['request']->getUri()->getPath());
+		$body = json_decode($transaction['request']->getBody()->getContents(), true);
+		$this->assertEquals(1642060235, $body['paid_on']);
+	}
+
 	public function testPaymentMethodsMapsResponseToModel(): void {
 		$responseBody = $this->jsonResponse([
 			'available_payment_methods' => ['card', 'fpx'],
@@ -430,7 +460,6 @@ final class ApiTest extends TestCase
 
 		$this->assertEquals(60, $transaction['options']['timeout']);
 	}
-
 
 	/**
 	 * @param array<string, mixed> $data

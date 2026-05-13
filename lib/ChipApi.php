@@ -7,6 +7,7 @@ use Chip\Exception\ClientException;
 use Chip\Exception\NotFoundException;
 use Chip\Exception\ServerException;
 use Chip\Exception\ValidationException;
+use Chip\Traits\Api\Billing;
 use Chip\Traits\Api\Client;
 use Chip\Traits\Api\PaymentMethod;
 use Chip\Traits\Api\Purchase;
@@ -16,9 +17,10 @@ use GuzzleHttp\Exception\ServerException as GuzzleServerException;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
-class ChipApi {
+class ChipApi
+{
 
-	use Purchase, PaymentMethod, Client, Webhook;
+	use Purchase, PaymentMethod, Client, Webhook, Billing;
 
 	protected \GuzzleHttp\Client $client;
 
@@ -38,6 +40,7 @@ class ChipApi {
 	){
 		$this->mapper = new \JsonMapper();
 		$this->mapper->bStrictNullTypes = false;
+		$this->mapper->bEnforceMapType = false;
 		$this->logger = $logger ?? new NullLogger();
 
 		$mergedConfig = array_merge([
