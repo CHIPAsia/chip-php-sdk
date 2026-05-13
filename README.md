@@ -1,8 +1,10 @@
 # CHIP PHP SDK
 
 [![CI](https://github.com/CHIPAsia/chip-php-sdk/actions/workflows/ci.yml/badge.svg)](https://github.com/CHIPAsia/chip-php-sdk/actions)
+<!-- Packagist badges - uncomment once published:
 [![Latest Stable Version](https://poser.pugx.org/chip/chip-sdk-php/v/stable)](https://packagist.org/packages/chip/chip-sdk-php)
 [![License](https://poser.pugx.org/chip/chip-sdk-php/license)](https://packagist.org/packages/chip/chip-sdk-php)
+-->
 
 Official PHP SDK for [CHIP](https://chip-in.asia) payment platform.
 
@@ -13,8 +15,11 @@ Official PHP SDK for [CHIP](https://chip-in.asia) payment platform.
 
 ## Installation
 
+The package is not yet published on Packagist. Install via VCS repository:
+
 ```bash
-composer require chip/chip-sdk-php
+composer config repositories.chip-sdk vcs https://github.com/CHIPAsia/chip-php-sdk.git
+composer require chip/chip-sdk-php:^1.2
 ```
 
 ## Quick Start
