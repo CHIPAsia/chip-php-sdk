@@ -4,50 +4,100 @@ namespace Chip\Model\Billing;
 
 class BillingTemplate implements \JsonSerializable
 {
-  public $type;
-  public $id;
-  public $created_on;
-  public $updated_on;
+    /** @var string|null */
+    public $type;
 
-  public $clients; //required
-  public $purchase; //required
-  public $company_id;
-  public $number_of_billing_cycles;
-  public $is_test;
-  public $user_id;
-  public $brand_id; //required
-  public $title; //required
-  public $is_subscription; //required
+    /** @var string|null */
+    public $id;
 
-  //invoice_* required if `is_subscription` is false
-  public $invoice_issued;
-  public $invoice_due;
-  public $invoice_skip_capture;
-  public $invoice_send_receipt;
+    /** @var int|null */
+    public $created_on;
 
-  //subscription_* required if `is_subscription` is true
-  public $subscription_period;
-  public $subscription_period_units;
-  public $subscription_due_period;
-  public $subscription_due_period_units;
-  public $subscription_charge_period_end;
-  public $subscription_trial_periods;
-  public $subscription_active;
-  public $subscription_has_active_clients;
+    /** @var int|null */
+    public $updated_on;
 
-  public $force_recurring;
+    /** @var mixed|null */
+    public $clients;
 
-  #[\ReturnTypeWillChange]
-  public function jsonSerialize()
-  {
-    return array_filter((array) $this, array($this, 'allow_non_null'));
-  }
+    /** @var mixed|null */
+    public $purchase;
 
-  private function allow_non_null($var)
-  {
-    if (is_null($var)) {
-      return false;
+    /** @var string|null */
+    public $company_id;
+
+    /** @var int|null */
+    public $number_of_billing_cycles;
+
+    /** @var bool|null */
+    public $is_test;
+
+    /** @var string|null */
+    public $user_id;
+
+    /** @var string|null */
+    public $brand_id;
+
+    /** @var string|null */
+    public $title;
+
+    /** @var bool|null */
+    public $is_subscription;
+
+    /** @var int|null */
+    public $invoice_issued;
+
+    /** @var int|null */
+    public $invoice_due;
+
+    /** @var bool|null */
+    public $invoice_skip_capture;
+
+    /** @var bool|null */
+    public $invoice_send_receipt;
+
+    /** @var int|null */
+    public $subscription_period;
+
+    /** @var string|null */
+    public $subscription_period_units;
+
+    /** @var int|null */
+    public $subscription_due_period;
+
+    /** @var string|null */
+    public $subscription_due_period_units;
+
+    /** @var int|null */
+    public $subscription_charge_period_end;
+
+    /** @var int|null */
+    public $subscription_trial_periods;
+
+    /** @var bool|null */
+    public $subscription_active;
+
+    /** @var bool|null */
+    public $subscription_has_active_clients;
+
+    /** @var bool|null */
+    public $force_recurring;
+
+    #[\ReturnTypeWillChange]
+    public function jsonSerialize()
+    {
+        return array_filter((array) $this, [$this, 'allow_non_null']);
     }
-    return true;
-  }
+
+    /**
+     * @param mixed $var
+     * @return bool
+     */
+    private function allow_non_null($var)
+    {
+        if (is_null($var)) {
+            return false;
+        }
+
+        return true;
+    }
 }

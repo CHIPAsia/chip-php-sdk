@@ -4,19 +4,18 @@ namespace Chip\Model;
 
 class ClientList implements \JsonSerializable
 {
+    /** @var ClientDetails[]|null */
+    public $results;
 
-  /**
-   *
-   * @var ClientDetails[]
-   */
-  public $results;
+    /** @var string|null */
+    public $next;
 
-  public $next;
-  public $previous;
+    /** @var string|null */
+    public $previous;
 
-  #[\ReturnTypeWillChange]
-  public function jsonSerialize()
-  {
-    return array_filter((array) $this);
-  }
+    #[\ReturnTypeWillChange]
+    public function jsonSerialize()
+    {
+        return array_filter((array) $this);
+    }
 }

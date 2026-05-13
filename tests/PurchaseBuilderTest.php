@@ -4,7 +4,8 @@ use PHPUnit\Framework\TestCase;
 
 final class PurchaseBuilderTest extends TestCase
 {
-    public function testBuildsPurchaseWithFluentApi(): void {
+    public function testBuildsPurchaseWithFluentApi(): void
+    {
         $purchase = \Chip\Builder\PurchaseBuilder::create()
             ->brandId('brand_123')
             ->currency('USD')
@@ -39,7 +40,8 @@ final class PurchaseBuilderTest extends TestCase
         $this->assertEquals(1.0, $purchase->purchase->products[1]->quantity);
     }
 
-    public function testProductsArrayDefaultsToEmpty(): void {
+    public function testProductsArrayDefaultsToEmpty(): void
+    {
         $purchase = \Chip\Builder\PurchaseBuilder::create()
             ->brandId('brand_123')
             ->build();

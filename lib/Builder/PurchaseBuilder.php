@@ -25,42 +25,49 @@ class PurchaseBuilder
     public function brandId(string $brandId): self
     {
         $this->purchase->brand_id = $brandId;
+
         return $this;
     }
 
     public function currency(string $currency): self
     {
         $this->purchase->purchase->currency = $currency;
+
         return $this;
     }
 
     public function language(string $language): self
     {
         $this->purchase->purchase->language = $language;
+
         return $this;
     }
 
     public function successRedirect(string $url): self
     {
         $this->purchase->success_redirect = $url;
+
         return $this;
     }
 
     public function failureRedirect(string $url): self
     {
         $this->purchase->failure_redirect = $url;
+
         return $this;
     }
 
     public function successCallback(string $url): self
     {
         $this->purchase->success_callback = $url;
+
         return $this;
     }
 
     public function cancelRedirect(string $url): self
     {
         $this->purchase->cancel_redirect = $url;
+
         return $this;
     }
 
@@ -68,6 +75,7 @@ class PurchaseBuilder
     {
         $this->ensureClient();
         $this->purchase->client->email = $email;
+
         return $this;
     }
 
@@ -75,6 +83,7 @@ class PurchaseBuilder
     {
         $this->ensureClient();
         $this->purchase->client->phone = $phone;
+
         return $this;
     }
 
@@ -82,6 +91,7 @@ class PurchaseBuilder
     {
         $this->ensureClient();
         $this->purchase->client->full_name = $fullName;
+
         return $this;
     }
 

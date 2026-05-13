@@ -1,46 +1,48 @@
 <?php
+
 namespace Chip\Model;
 
-class PaymentMethods implements \JsonSerializable {
-	/**
-	 *
-	 * @var string[]
-	 */
-	public $available_payment_methods;
-	
-	/**
-	 *
-	 * @var string[][]
-	 */
-	public $by_country;
-	
-	/**
-	 *
-	 * @var string[]
-	 */
-	public $country_names;
-	
-	/**
-	 *
-	 * @var string[]
-	 */
-	public $names;
-	
-	/**
-	 *
-	 * @var string[]
-	 */
-	public $card_methods;
+class PaymentMethods implements \JsonSerializable
+{
+    /**
+     *
+     * @var string[]
+     */
+    public $available_payment_methods;
 
-	/**
-	 *
-	 * @var array
-	 */
-	public $logos;
-	
-  #[\ReturnTypeWillChange]
-	public function jsonSerialize() {
-		return array_filter((array) $this);
-	}
+    /**
+     *
+     * @var string[][]
+     */
+    public $by_country;
+
+    /**
+     *
+     * @var string[]
+     */
+    public $country_names;
+
+    /**
+     *
+     * @var string[]
+     */
+    public $names;
+
+    /**
+     *
+     * @var string[]
+     */
+    public $card_methods;
+
+    /**
+     *
+     * @var array<string, mixed>|null
+     */
+    public $logos;
+
+    #[\ReturnTypeWillChange]
+    public function jsonSerialize()
+    {
+        return array_filter((array) $this);
+    }
 }
-

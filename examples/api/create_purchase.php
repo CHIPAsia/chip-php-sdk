@@ -24,7 +24,7 @@ $purchase->success_callback = $config['basedUrl'] . '/api/callback.php';
 $result = $chip->createPurchase($purchase);
 
 if ($result && $result->checkout_url) {
-	// Redirect user to checkout
-	header("Location: " . $result->checkout_url);
-	exit;
+    // Redirect user to checkout
+    header("Location: " . $result->checkout_url);
+    exit;
 }

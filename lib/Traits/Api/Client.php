@@ -7,20 +7,21 @@ use Chip\Model\ClientList;
 
 trait Client
 {
-	/**
-	 * 
-	 * @param \Chip\Model\ClientDetails $client
-	 * @return \Chip\Model\ClientDetails
-	 */
-	public function createClient(ModelClientDetails $client): ModelClientDetails
-	{
-		return $this->mapper->map($this->request('POST', 'clients/', [
-			'json' => $client
-		]), new ModelClientDetails());
-	}
+    /**
+     *
+     * @param \Chip\Model\ClientDetails $client
+     * @return \Chip\Model\ClientDetails
+     */
+    public function createClient(ModelClientDetails $client): ModelClientDetails
+    {
+        return $this->mapper->map($this->request('POST', 'clients/', [
+            'json' => $client,
+        ]), new ModelClientDetails());
+    }
 
-	public function getClients()
-	{
-		return $this->mapper->map($this->request('GET', 'clients/'), new ClientList());
-	}
+    /** @return ClientList */
+    public function getClients()
+    {
+        return $this->mapper->map($this->request('GET', 'clients/'), new ClientList());
+    }
 }
