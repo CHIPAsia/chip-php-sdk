@@ -126,4 +126,12 @@ trait Purchase
 
         return $this->mapper->map($this->request('POST', "purchases/$purchaseId/mark_as_paid/", $options), new ModelPurchase());
     }
+
+    /**
+     * @return ModelPurchase
+     */
+    public function resendInvoice(string $purchaseId): ModelPurchase
+    {
+        return $this->mapper->map($this->request('POST', "purchases/$purchaseId/resend_invoice/"), new ModelPurchase());
+    }
 }

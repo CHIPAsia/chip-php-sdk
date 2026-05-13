@@ -7,10 +7,13 @@ use Chip\Exception\ClientException;
 use Chip\Exception\NotFoundException;
 use Chip\Exception\ServerException;
 use Chip\Exception\ValidationException;
+use Chip\Traits\Api\Account;
 use Chip\Traits\Api\Billing;
 use Chip\Traits\Api\Client;
 use Chip\Traits\Api\PaymentMethod;
+use Chip\Traits\Api\PublicKey;
 use Chip\Traits\Api\Purchase;
+use Chip\Traits\Api\Statements;
 use Chip\Traits\Api\Webhook;
 use GuzzleHttp\Exception\ClientException as GuzzleClientException;
 use GuzzleHttp\Exception\ServerException as GuzzleServerException;
@@ -24,6 +27,9 @@ class ChipApi
     use Client;
     use Webhook;
     use Billing;
+    use PublicKey;
+    use Account;
+    use Statements;
 
     protected \GuzzleHttp\Client $client;
 

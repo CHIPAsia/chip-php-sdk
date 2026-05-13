@@ -48,13 +48,13 @@ final class ApiTest extends TestCase
         $api = $this->getMockApi(new MockHandler([
             new Response(200, [], '{}'),
         ]), $history);
-        $api->getPaymentMethods('USD');
+        $api->getPaymentMethods('MYR');
         $transaction = $container[0];
 
         $this->assertEquals('GET', $transaction['request']->getMethod());
         $this->assertStringContainsString('payment_methods/', $transaction['request']->getUri()->getPath());
         $body = json_decode($transaction['request']->getBody()->getContents(), true);
-        $this->assertStringContainsString('currency=USD', $transaction['request']->getUri()->getQuery());
+        $this->assertStringContainsString('currency=MYR', $transaction['request']->getUri()->getQuery());
     }
 
     public function testCreatePurchase(): void
@@ -688,6 +688,311 @@ final class ApiTest extends TestCase
 
         $this->assertEquals('GET', $transaction['request']->getMethod());
         $this->assertStringContainsString('clients/', $transaction['request']->getUri()->getPath());
+    }
+
+    public function testResendInvoice(): void
+    {
+        $container = [];
+        $history = Middleware::history($container);
+        $api = $this->getMockApi(new MockHandler([
+            new Response(200, [], '{}'),
+        ]), $history);
+
+        $api->resendInvoice('123');
+        $transaction = $container[0];
+
+        $this->assertEquals('POST', $transaction['request']->getMethod());
+        $this->assertStringContainsString('purchases/123/resend_invoice', $transaction['request']->getUri()->getPath());
+    }
+
+    public function testGetClient(): void
+    {
+        $container = [];
+        $history = Middleware::history($container);
+        $api = $this->getMockApi(new MockHandler([
+            new Response(200, [], '{}'),
+        ]), $history);
+
+        $api->getClient('client_123');
+        $transaction = $container[0];
+
+        $this->assertEquals('GET', $transaction['request']->getMethod());
+        $this->assertStringContainsString('clients/client_123/', $transaction['request']->getUri()->getPath());
+    }
+
+    public function testUpdateClient(): void
+    {
+        $container = [];
+        $history = Middleware::history($container);
+        $api = $this->getMockApi(new MockHandler([
+            new Response(200, [], '{}'),
+        ]), $history);
+
+        $client = new \Chip\Model\ClientDetails();
+        $client->email = 'updated@example.com';
+        $api->updateClient('client_123', $client);
+        $transaction = $container[0];
+
+        $this->assertEquals('PUT', $transaction['request']->getMethod());
+        $this->assertStringContainsString('clients/client_123/', $transaction['request']->getUri()->getPath());
+    }
+
+    public function testPartialUpdateClient(): void
+    {
+        $container = [];
+        $history = Middleware::history($container);
+        $api = $this->getMockApi(new MockHandler([
+            new Response(200, [], '{}'),
+        ]), $history);
+
+        $client = new \Chip\Model\ClientDetails();
+        $client->email = 'updated@example.com';
+        $api->partialUpdateClient('client_123', $client);
+        $transaction = $container[0];
+
+        $this->assertEquals('PATCH', $transaction['request']->getMethod());
+        $this->assertStringContainsString('clients/client_123/', $transaction['request']->getUri()->getPath());
+    }
+
+    public function testDeleteClient(): void
+    {
+        $container = [];
+        $history = Middleware::history($container);
+        $api = $this->getMockApi(new MockHandler([
+            new Response(204, [], ''),
+        ]), $history);
+
+        $api->deleteClient('client_123');
+        $transaction = $container[0];
+
+        $this->assertEquals('DELETE', $transaction['request']->getMethod());
+        $this->assertStringContainsString('clients/client_123/', $transaction['request']->getUri()->getPath());
+    }
+
+    public function testListRecurringTokens(): void
+    {
+        $container = [];
+        $history = Middleware::history($container);
+        $api = $this->getMockApi(new MockHandler([
+            new Response(200, [], '{}'),
+        ]), $history);
+
+        $api->listRecurringTokens('client_123');
+        $transaction = $container[0];
+
+        $this->assertEquals('GET', $transaction['request']->getMethod());
+        $this->assertStringContainsString('clients/client_123/recurring_tokens/', $transaction['request']->getUri()->getPath());
+    }
+
+    public function testGetRecurringToken(): void
+    {
+        $container = [];
+        $history = Middleware::history($container);
+        $api = $this->getMockApi(new MockHandler([
+            new Response(200, [], '{}'),
+        ]), $history);
+
+        $api->getRecurringToken('client_123', 'purchase_456');
+        $transaction = $container[0];
+
+        $this->assertEquals('GET', $transaction['request']->getMethod());
+        $this->assertStringContainsString('clients/client_123/recurring_tokens/purchase_456/', $transaction['request']->getUri()->getPath());
+    }
+
+    public function testDeleteRecurringTokenByClient(): void
+    {
+        $container = [];
+        $history = Middleware::history($container);
+        $api = $this->getMockApi(new MockHandler([
+            new Response(204, [], ''),
+        ]), $history);
+
+        $api->deleteRecurringTokenByClient('client_123', 'purchase_456');
+        $transaction = $container[0];
+
+        $this->assertEquals('DELETE', $transaction['request']->getMethod());
+        $this->assertStringContainsString('clients/client_123/recurring_tokens/purchase_456/', $transaction['request']->getUri()->getPath());
+    }
+
+    public function testListWebhooks(): void
+    {
+        $container = [];
+        $history = Middleware::history($container);
+        $api = $this->getMockApi(new MockHandler([
+            new Response(200, [], '{}'),
+        ]), $history);
+
+        $api->listWebhooks();
+        $transaction = $container[0];
+
+        $this->assertEquals('GET', $transaction['request']->getMethod());
+        $this->assertStringContainsString('webhooks/', $transaction['request']->getUri()->getPath());
+    }
+
+    public function testUpdateWebhook(): void
+    {
+        $container = [];
+        $history = Middleware::history($container);
+        $api = $this->getMockApi(new MockHandler([
+            new Response(200, [], '{}'),
+        ]), $history);
+
+        $webhook = new \Chip\Model\Webhook();
+        $webhook->title = 'Updated';
+        $api->updateWebhook('wh_123', $webhook);
+        $transaction = $container[0];
+
+        $this->assertEquals('PUT', $transaction['request']->getMethod());
+        $this->assertStringContainsString('webhooks/wh_123/', $transaction['request']->getUri()->getPath());
+    }
+
+    public function testPartialUpdateWebhook(): void
+    {
+        $container = [];
+        $history = Middleware::history($container);
+        $api = $this->getMockApi(new MockHandler([
+            new Response(200, [], '{}'),
+        ]), $history);
+
+        $webhook = new \Chip\Model\Webhook();
+        $webhook->title = 'Updated';
+        $api->partialUpdateWebhook('wh_123', $webhook);
+        $transaction = $container[0];
+
+        $this->assertEquals('PATCH', $transaction['request']->getMethod());
+        $this->assertStringContainsString('webhooks/wh_123/', $transaction['request']->getUri()->getPath());
+    }
+
+    public function testGetPublicKey(): void
+    {
+        $container = [];
+        $history = Middleware::history($container);
+        $api = $this->getMockApi(new MockHandler([
+            new Response(200, [], $this->jsonResponse(['public_key' => 'pk_test'])),
+        ]), $history);
+
+        $key = $api->getPublicKey();
+        $transaction = $container[0];
+
+        $this->assertEquals('GET', $transaction['request']->getMethod());
+        $this->assertStringContainsString('public_key/', $transaction['request']->getUri()->getPath());
+        $this->assertEquals('pk_test', $key);
+    }
+
+    public function testGetBalance(): void
+    {
+        $container = [];
+        $history = Middleware::history($container);
+        $api = $this->getMockApi(new MockHandler([
+            new Response(200, [], $this->jsonResponse(['MYR' => ['balance' => 100]])),
+        ]), $history);
+
+        $result = $api->getBalance(['currency' => 'MYR']);
+        $transaction = $container[0];
+
+        $this->assertEquals('GET', $transaction['request']->getMethod());
+        $this->assertStringContainsString('account/json/balance/', $transaction['request']->getUri()->getPath());
+        $this->assertStringContainsString('currency=MYR', $transaction['request']->getUri()->getQuery());
+        $this->assertEquals(['MYR' => ['balance' => 100]], $result);
+    }
+
+    public function testGetTurnover(): void
+    {
+        $container = [];
+        $history = Middleware::history($container);
+        $api = $this->getMockApi(new MockHandler([
+            new Response(200, [], $this->jsonResponse(['incoming' => ['turnover' => 50], 'outgoing' => ['turnover' => 20]])),
+        ]), $history);
+
+        $result = $api->getTurnover(['currency' => 'MYR', 'from' => 1609459200, 'to' => 1609545600]);
+        $transaction = $container[0];
+
+        $this->assertEquals('GET', $transaction['request']->getMethod());
+        $this->assertStringContainsString('account/json/turnover/', $transaction['request']->getUri()->getPath());
+        $query = $transaction['request']->getUri()->getQuery();
+        $this->assertStringContainsString('currency=MYR', $query);
+        $this->assertStringContainsString('from=1609459200', $query);
+        $this->assertStringContainsString('to=1609545600', $query);
+    }
+
+    public function testScheduleStatement(): void
+    {
+        $container = [];
+        $history = Middleware::history($container);
+        $api = $this->getMockApi(new MockHandler([
+            new Response(201, [], '{}'),
+        ]), $history);
+
+        $statement = new \Chip\Model\CompanyStatement();
+        $statement->format = 'csv';
+        $api->scheduleStatement($statement);
+        $transaction = $container[0];
+
+        $this->assertEquals('POST', $transaction['request']->getMethod());
+        $this->assertStringContainsString('company_statements/', $transaction['request']->getUri()->getPath());
+    }
+
+    public function testListStatements(): void
+    {
+        $container = [];
+        $history = Middleware::history($container);
+        $api = $this->getMockApi(new MockHandler([
+            new Response(200, [], '{}'),
+        ]), $history);
+
+        $api->listStatements();
+        $transaction = $container[0];
+
+        $this->assertEquals('GET', $transaction['request']->getMethod());
+        $this->assertStringContainsString('company_statements/', $transaction['request']->getUri()->getPath());
+    }
+
+    public function testGetStatement(): void
+    {
+        $container = [];
+        $history = Middleware::history($container);
+        $api = $this->getMockApi(new MockHandler([
+            new Response(200, [], '{}'),
+        ]), $history);
+
+        $api->getStatement('stmt_123');
+        $transaction = $container[0];
+
+        $this->assertEquals('GET', $transaction['request']->getMethod());
+        $this->assertStringContainsString('company_statements/stmt_123/', $transaction['request']->getUri()->getPath());
+    }
+
+    public function testCancelStatement(): void
+    {
+        $container = [];
+        $history = Middleware::history($container);
+        $api = $this->getMockApi(new MockHandler([
+            new Response(200, [], '{}'),
+        ]), $history);
+
+        $api->cancelStatement('stmt_123');
+        $transaction = $container[0];
+
+        $this->assertEquals('POST', $transaction['request']->getMethod());
+        $this->assertStringContainsString('company_statements/stmt_123/cancel', $transaction['request']->getUri()->getPath());
+    }
+
+    public function testPaymentMethodsWithOptionalParams(): void
+    {
+        $container = [];
+        $history = Middleware::history($container);
+        $api = $this->getMockApi(new MockHandler([
+            new Response(200, [], '{}'),
+        ]), $history);
+
+        $api->getPaymentMethods('MYR', ['country' => 'MY', 'recurring' => true, 'amount' => 500]);
+        $transaction = $container[0];
+
+        $this->assertEquals('GET', $transaction['request']->getMethod());
+        $query = $transaction['request']->getUri()->getQuery();
+        $this->assertStringContainsString('country=MY', $query);
+        $this->assertStringContainsString('recurring=1', $query);
+        $this->assertStringContainsString('amount=500', $query);
     }
 
     /**

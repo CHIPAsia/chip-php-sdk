@@ -3,6 +3,7 @@
 namespace Chip\Traits\Api;
 
 use Chip\Model\Webhook as ModelWebHook;
+use Chip\Model\WebhookList;
 
 trait Webhook
 {
@@ -36,5 +37,27 @@ trait Webhook
     public function deleteWebhook(string $webhookId): mixed
     {
         return $this->request('DELETE', "webhooks/$webhookId/");
+    }
+
+    /** @return WebhookList */
+    public function listWebhooks()
+    {
+        return $this->mapper->map($this->request('GET', 'webhooks/'), new WebhookList());
+    }
+
+    /** @return ModelWebHook */
+    public function updateWebhook(string $webhookId, ModelWebHook $webhook)
+    {
+        return $this->mapper->map($this->request('PUT', "webhooks/$webhookId/", [
+            'json' => $webhook,
+        ]), new ModelWebHook());
+    }
+
+    /** @return ModelWebHook */
+    public function partialUpdateWebhook(string $webhookId, ModelWebHook $webhook)
+    {
+        return $this->mapper->map($this->request('PATCH', "webhooks/$webhookId/", [
+            'json' => $webhook,
+        ]), new ModelWebHook());
     }
 }
