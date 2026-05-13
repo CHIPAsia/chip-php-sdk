@@ -16,13 +16,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add configurable request timeout via constructor `$config` array
 - Add `PurchaseBuilder` fluent API for constructing purchase objects
 - Add PHPStan (level 8) and PHP-CS-Fixer configuration
-- Add GitHub Actions CI workflow (tests on PHP 8.0–8.3, static analysis, code style)
+- Add GitHub Actions CI workflow (tests on PHP 8.1–8.3, static analysis, code style)
 - Add GitHub Actions PR summary automation via Ollama Cloud
-- Expand test coverage: model mapping tests, exception handling tests, logger integration, timeout configuration
+- Add GitHub Actions changelog validation and release automation
+- Expand test coverage: model mapping tests, exception handling tests, logger integration, timeout configuration, billing API tests, webhook verification tests
 
 ### Changed
 
-- Bump PHP requirement from `>=7.2.0` to `^8.0`
+- Bump PHP requirement from `>=7.2.0` to `^8.1`
+- Upgrade PHPUnit to ^10.5, PHPStan to ^2.1, PHP-CS-Fixer to ^3.95
 - Rewrite `ChipApi::request()` to catch Guzzle HTTP exceptions and throw domain-specific exceptions
 - Rewrite README with badges, quick-start, API reference, error handling docs
 - Add CONTRIBUTING.md with development workflow guidelines
@@ -32,6 +34,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fix implicitly nullable parameter warnings in `Purchase` trait by using explicit nullable types (`?int`)
 - Fix existing tests to pass correct types (string IDs, `Purchase` objects)
+- Add property and return types to billing models and traits for PHPStan level 8 compliance
+- Fix composer.json missing required `description` field for strict validation
 
 ## [1.1.3] - 2024-03-12
 
