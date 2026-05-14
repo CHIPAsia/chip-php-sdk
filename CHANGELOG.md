@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.1] - 2026-05-14
+
+### Fixed
+
+- Fix v2.0.0 examples to use resource-based API (`$chip->purchases->create()` instead of `$chip->createPurchase()`)
+- Exclude non-production files from Composer dist via `.gitattributes` (`/examples`, `/tests`, CI configs, dev tooling)
+
 ## [2.0.0] - 2026-05-14
 
 ### Added
@@ -53,6 +60,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add property and return types to billing models and traits for PHPStan level 8 compliance
 - Fix composer.json missing required `description` field for strict validation
 - Fix model properties to match OpenAPI spec: `Product::quantity`, `Product::tax_percent` are now `string|null`; `Purchase::issued` is now `string|null`; `Purchase::status_history` is now `array`
+
+## [1.2.1] - 2026-05-14
+
+### Fixed
+
+- Fix v1.x examples to use SDK methods instead of raw curl
+- Exclude non-production files from Composer dist via `.gitattributes`
+
+## [1.2.0] - 2026-05-14
+
+### Added
+
+- Add missing endpoints for full CHIP Collect API parity: Account (balance, turnover), PublicKey, Statements (list, schedule), Client CRUD, Webhook list/update, Purchase resend invoice, Purchase delete recurring token
+- Add `ClientDetails`, `ClientList`, `ClientRecurringToken`, `ClientRecurringTokenList`, `CompanyStatement`, `CompanyStatementList`, `WebhookList`, `PublicKey` models
+- Add `getClient()` method to `Client` trait
+
+### Fixed
+
+- Fix model properties to match OpenAPI spec: `Product::quantity`, `Product::tax_percent` are now `string|null`; `Purchase::issued` is now `string|null`; `Purchase::status_history` is now `array`
+- Fix implicitly nullable parameter warnings by using explicit nullable types (`?int`)
+- Fix composer.json missing required `description` field for strict validation
 
 ## [1.1.3] - 2024-03-12
 
@@ -128,8 +156,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `verify()` static method for webhook signature verification using RSA-SHA256
 - Basic test suite with Guzzle `MockHandler`
 
-[Unreleased]: https://github.com/CHIPAsia/chip-php-sdk/compare/v2.0.0...HEAD
-[2.0.0]: https://github.com/CHIPAsia/chip-php-sdk/compare/v1.1.3...v2.0.0
+[Unreleased]: https://github.com/CHIPAsia/chip-php-sdk/compare/v2.0.1...HEAD
+[2.0.1]: https://github.com/CHIPAsia/chip-php-sdk/compare/v2.0.0...v2.0.1
+[2.0.0]: https://github.com/CHIPAsia/chip-php-sdk/compare/v1.2.1...v2.0.0
+[1.2.1]: https://github.com/CHIPAsia/chip-php-sdk/compare/v1.2.0...v1.2.1
+[1.2.0]: https://github.com/CHIPAsia/chip-php-sdk/compare/v1.1.3...v1.2.0
 [1.1.3]: https://github.com/CHIPAsia/chip-php-sdk/compare/v1.1.2...v1.1.3
 [1.1.2]: https://github.com/CHIPAsia/chip-php-sdk/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/CHIPAsia/chip-php-sdk/compare/v1.1.0...v1.1.1
