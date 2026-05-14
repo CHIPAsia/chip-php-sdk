@@ -118,6 +118,30 @@ class ClientDetails implements \JsonSerializable
      */
     public $tax_number;
 
+    /**
+     *
+     * @var string|null
+     */
+    public $state;
+
+    /**
+     *
+     * @var string|null
+     */
+    public $shipping_state;
+
+    /**
+     *
+     * @var string|null
+     */
+    public $bank_account;
+
+    /**
+     *
+     * @var string|null
+     */
+    public $bank_code;
+
     #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {

@@ -33,7 +33,7 @@ final class ModelTest extends TestCase
         $product = new \Chip\Model\Product();
         $product->name = 'Widget';
         $product->price = 500;
-        $product->quantity = 1.0;
+        $product->quantity = '1.0';
         $details->products = [$product];
 
         $json = json_encode($details);
@@ -51,7 +51,7 @@ final class ModelTest extends TestCase
         $product = new \Chip\Model\Product();
         $product->name = 'Gadget';
         $product->price = 100;
-        $product->quantity = 2.0;
+        $product->quantity = '2.0';
 
         $json = json_encode($product);
         $this->assertIsString($json);
@@ -215,7 +215,7 @@ final class ModelTest extends TestCase
         $product = new \Chip\Model\Product();
         $product->name = 'Test';
         $product->price = 100;
-        $product->quantity = 1.0;
+        $product->quantity = '1.0';
         $details->products = [$product];
 
         $purchase->purchase = $details;

@@ -10,7 +10,7 @@ class Product implements \JsonSerializable
     public $name;
 
     /**
-     * @var float|null
+     * @var string|null
      */
     public $quantity;
 
@@ -25,9 +25,19 @@ class Product implements \JsonSerializable
     public $discount;
 
     /**
-     * @var float|null
+     * @var string|null
      */
     public $tax_percent;
+
+    /**
+     * @var string|null
+     */
+    public $category;
+
+    /**
+     * @var int|null
+     */
+    public $total_price_override;
 
     #[\ReturnTypeWillChange]
     public function jsonSerialize()

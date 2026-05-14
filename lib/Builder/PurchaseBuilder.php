@@ -95,12 +95,12 @@ class PurchaseBuilder
         return $this;
     }
 
-    public function addProduct(string $name, int $price, float $quantity = 1.0): self
+    public function addProduct(string $name, int $price, float|string $quantity = 1.0): self
     {
         $product = new Product();
         $product->name = $name;
         $product->price = $price;
-        $product->quantity = $quantity;
+        $product->quantity = is_string($quantity) ? $quantity : (string) $quantity;
 
         $this->purchase->purchase->products[] = $product;
 

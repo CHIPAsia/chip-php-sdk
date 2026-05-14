@@ -89,6 +89,36 @@ class PurchaseDetails implements \JsonSerializable
      */
     public $email_message;
 
+    /**
+     *
+     * @var array<int, mixed>
+     */
+    public $shipping_options;
+
+    /**
+     *
+     * @var object|null
+     */
+    public $payment_method_details;
+
+    /**
+     *
+     * @var bool
+     */
+    public $has_upsell_products;
+
+    /**
+     *
+     * @var bool
+     */
+    public $single_attempt;
+
+    /**
+     *
+     * @var object|null
+     */
+    public $metadata;
+
     #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {

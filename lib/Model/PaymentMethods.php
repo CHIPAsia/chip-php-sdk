@@ -12,19 +12,22 @@ class PaymentMethods implements \JsonSerializable
 
     /**
      *
-     * @var string[][]
+     * @var array
+     * @phpstan-var array<string, string[]>
      */
     public $by_country;
 
     /**
      *
-     * @var string[]
+     * @var array
+     * @phpstan-var array<string, string>
      */
     public $country_names;
 
     /**
      *
-     * @var string[]
+     * @var array
+     * @phpstan-var array<string, string>
      */
     public $names;
 

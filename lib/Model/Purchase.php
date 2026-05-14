@@ -48,7 +48,7 @@ class Purchase implements \JsonSerializable
 
     /**
      *
-     * @var object
+     * @var array<int, object>
      */
     public $status_history;
 
@@ -138,7 +138,7 @@ class Purchase implements \JsonSerializable
 
     /**
      *
-     * @var int
+     * @var string|null
      */
     public $issued;
 
@@ -237,6 +237,84 @@ class Purchase implements \JsonSerializable
      * @var string
      */
     public $direct_post_url;
+
+    /**
+     *
+     * @var string|null
+     */
+    public $notes;
+
+    /**
+     *
+     * @var bool
+     */
+    public $marked_as_paid;
+
+    /**
+     *
+     * @var string|null
+     */
+    public $order_id;
+
+    /**
+     *
+     * @var array<int, mixed>
+     */
+    public $upsell_campaigns;
+
+    /**
+     *
+     * @var string|null
+     */
+    public $referral_campaign_id;
+
+    /**
+     *
+     * @var string|null
+     */
+    public $referral_code;
+
+    /**
+     *
+     * @var object|null
+     */
+    public $referral_code_details;
+
+    /**
+     *
+     * @var string|null
+     */
+    public $referral_code_generated;
+
+    /**
+     *
+     * @var object|null
+     */
+    public $retain_level_details;
+
+    /**
+     *
+     * @var bool
+     */
+    public $can_retrieve;
+
+    /**
+     *
+     * @var bool
+     */
+    public $can_chargeback;
+
+    /**
+     *
+     * @var bool
+     */
+    public $can_reverse_chargeback;
+
+    /**
+     *
+     * @var string[]
+     */
+    public $tags;
 
     #[\ReturnTypeWillChange]
     public function jsonSerialize()
