@@ -50,7 +50,7 @@ $purchase = PurchaseBuilder::create()
     ->successCallback('https://yourdomain.com/webhook')
     ->build();
 
-$result = $chip->createPurchase($purchase);
+$result = $chip->purchases->create($purchase);
 
 if ($result->checkout_url) {
     header('Location: ' . $result->checkout_url);
@@ -80,43 +80,57 @@ $chip = new ChipApi(
 
 ## API Methods
 
+The SDK is organized into resource objects accessed via properties on `ChipApi`:
+
+- `$chip->purchases`
+- `$chip->clients`
+- `$chip->webhooks`
+- `$chip->paymentMethods`
+- `$chip->account`
+- `$chip->statements`
+- `$chip->publicKey`
+- `$chip->billing`
+
 ### Purchases
 
 ```php
 // Create a purchase
-$purchase = $chip->createPurchase($purchaseModel);
+$purchase = $chip->purchases->create($purchaseModel);
 
 // Get purchase details
-$purchase = $chip->getPurchase('purchase_id');
+$purchase = $chip->purchases->get('purchase_id');
 
 // Cancel a purchase
-$purchase = $chip->cancelPurchase('purchase_id');
+$purchase = $chip->purchases->cancel('purchase_id');
 
 // Release a purchase
-$purchase = $chip->releasePurchase('purchase_id');
+$purchase = $chip->purchases->release('purchase_id');
 
 // Capture payment (full or partial)
-$purchase = $chip->capturePurchase('purchase_id');
-$purchase = $chip->capturePurchase('purchase_id', 5000); // partial
+$purchase = $chip->purchases->capture('purchase_id');
+$purchase = $chip->purchases->capture('purchase_id', 5000); // partial
 
 // Refund (full or partial)
-$purchase = $chip->refundPurchase('purchase_id');
-$purchase = $chip->refundPurchase('purchase_id', 2500); // partial
+$purchase = $chip->purchases->refund('purchase_id');
+$purchase = $chip->purchases->refund('purchase_id', 2500); // partial
 
 // Charge with recurring token
-$purchase = $chip->chargePurchase('purchase_id', 'recurring_token');
+$purchase = $chip->purchases->charge('purchase_id', 'recurring_token');
 
 // Delete recurring token
-$purchase = $chip->deleteRecurringToken('purchase_id');
+$purchase = $chip->purchases->deleteRecurringToken('purchase_id');
+
+// Resend invoice
+$purchase = $chip->purchases->resendInvoice('purchase_id');
 ```
 
 ### Payment Methods
 
 ```php
-$methods = $chip->getPaymentMethods('MYR');
+$methods = $chip->paymentMethods->list('MYR');
 
 // Optional filters
-$methods = $chip->getPaymentMethods('MYR', [
+$methods = $chip->paymentMethods->list('MYR', [
     'country' => 'MY',
     'recurring' => true,
     'amount' => 500,
@@ -130,74 +144,77 @@ $methods = $chip->getPaymentMethods('MYR', [
 $client = new \Chip\Model\ClientDetails();
 $client->email = 'customer@example.com';
 $client->full_name = 'John Doe';
-$created = $chip->createClient($client);
+$created = $chip->clients->create($client);
 
 // List all clients
-$clients = $chip->getClients();
+$clients = $chip->clients->list();
+
+// Iterate all clients (auto-paginates)
+foreach ($chip->clients->iterate() as $client) {
+    echo $client->email;
+}
 
 // Retrieve a client
-$client = $chip->getClient($clientId);
+$client = $chip->clients->get($clientId);
 
 // Update a client
-$updated = $chip->updateClient($clientId, $client);
+$updated = $chip->clients->update($clientId, $client);
 
 // Partially update a client
-$updated = $chip->partialUpdateClient($clientId, $client);
+$updated = $chip->clients->partialUpdate($clientId, $client);
 
 // Delete a client
-$chip->deleteClient($clientId);
+$chip->clients->delete($clientId);
 
 // List recurring tokens for a client
-$tokens = $chip->listRecurringTokens($clientId);
+$tokens = $chip->clients->listRecurringTokens($clientId);
 
 // Get a specific recurring token
-$token = $chip->getRecurringToken($clientId, $purchaseId);
+$token = $chip->clients->getRecurringToken($clientId, $purchaseId);
 
 // Delete a recurring token
-$chip->deleteRecurringTokenByClient($clientId, $purchaseId);
+$chip->clients->deleteRecurringToken($clientId, $purchaseId);
 ```
 
 ### Webhooks
 
 ```php
 // List all webhooks
-$webhooks = $chip->listWebhooks();
+$webhooks = $chip->webhooks->list();
+
+// Iterate all webhooks (auto-paginates)
+foreach ($chip->webhooks->iterate() as $webhook) {
+    echo $webhook->title;
+}
 
 // Create a webhook
 $webhook = new \Chip\Model\Webhook();
-$webhook->url = 'https://yourdomain.com/webhook';
-$webhook->event_type = 'purchase.paid';
-$created = $chip->createWebhook($webhook);
+$webhook->title = 'My Webhook';
+$webhook->callback = 'https://yourdomain.com/webhook';
+$created = $chip->webhooks->create($webhook);
 
 // Get webhook details
-$webhook = $chip->getWebhook($webhookId);
+$webhook = $chip->webhooks->get($webhookId);
 
 // Update a webhook
-$updated = $chip->updateWebhook($webhookId, $webhook);
+$updated = $chip->webhooks->update($webhookId, $webhook);
 
 // Partially update a webhook
-$updated = $chip->partialUpdateWebhook($webhookId, $webhook);
+$updated = $chip->webhooks->partialUpdate($webhookId, $webhook);
 
 // Delete a webhook
-$chip->deleteWebhook($webhookId);
-```
-
-### Purchases
-
-```php
-// Resend an invoice
-$purchase = $chip->resendInvoice($purchaseId);
+$chip->webhooks->delete($webhookId);
 ```
 
 ### Account
 
 ```php
 // Get account balance (with optional filters)
-$balance = $chip->getBalance();
-$balance = $chip->getBalance(['currency' => 'MYR']);
+$balance = $chip->account->balance();
+$balance = $chip->account->balance(['currency' => 'MYR']);
 
 // Get account turnover
-$turnover = $chip->getTurnover(['from' => 1609459200, 'to' => 1640995200]);
+$turnover = $chip->account->turnover(['from' => 1609459200, 'to' => 1640995200]);
 ```
 
 ### Statements
@@ -206,22 +223,75 @@ $turnover = $chip->getTurnover(['from' => 1609459200, 'to' => 1640995200]);
 // Schedule a company statement
 $statement = new \Chip\Model\CompanyStatement();
 $statement->format = 'csv';
-$scheduled = $chip->scheduleStatement($statement);
+$scheduled = $chip->statements->schedule($statement);
 
 // List statements
-$statements = $chip->listStatements();
+$statements = $chip->statements->list();
+
+// Iterate statements (auto-paginates)
+foreach ($chip->statements->iterate() as $statement) {
+    echo $statement->format;
+}
 
 // Get a statement
-$statement = $chip->getStatement($statementId);
+$statement = $chip->statements->get($statementId);
 
 // Cancel a statement
-$statement = $chip->cancelStatement($statementId);
+$statement = $chip->statements->cancel($statementId);
 ```
 
 ### Public Key
 
 ```php
-$publicKey = $chip->getPublicKey();
+$publicKey = $chip->publicKey->get();
+```
+
+### Billing
+
+```php
+// Create a billing template
+$template = new \Chip\Model\Billing\BillingTemplate();
+$template->title = 'Monthly Subscription';
+$created = $chip->billing->createTemplate($template);
+
+// List billing templates
+$templates = $chip->billing->listTemplates();
+
+// Iterate billing templates (auto-paginates)
+foreach ($chip->billing->iterateTemplates() as $template) {
+    echo $template->title;
+}
+
+// Get a billing template
+$template = $chip->billing->getTemplate($templateId);
+
+// Update a billing template
+$updated = $chip->billing->updateTemplate($templateId, $template);
+
+// Delete a billing template
+$chip->billing->deleteTemplate($templateId);
+
+// Send an invoice from a billing template
+$client = new \Chip\Model\Billing\BillingTemplateClient();
+$client->client_id = $clientId;
+$purchase = $chip->billing->sendInvoice($templateId, $client);
+
+// Add a subscriber
+$result = $chip->billing->addSubscriber($templateId, $client);
+
+// List billing template clients
+$clients = $chip->billing->listClients($templateId);
+
+// Iterate billing template clients (auto-paginates)
+foreach ($chip->billing->iterateClients($templateId) as $client) {
+    echo $client->client_id;
+}
+
+// Get a billing template client
+$client = $chip->billing->getClient($templateId, $clientId);
+
+// Update a billing template client
+$updated = $chip->billing->updateClient($templateId, $clientId, $client);
 ```
 
 ## Error Handling
@@ -236,7 +306,7 @@ use Chip\Exception\ServerException;
 use Chip\Exception\ClientException;
 
 try {
-    $purchase = $chip->getPurchase('nonexistent_id');
+    $purchase = $chip->purchases->get('nonexistent_id');
 } catch (NotFoundException $e) {
     // 404 - Purchase not found
     echo $e->getMessage();
@@ -256,7 +326,7 @@ All exceptions extend `ChipApiException` and expose the response body:
 
 ```php
 try {
-    $chip->createPurchase($purchase);
+    $chip->purchases->create($purchase);
 } catch (ChipApiException $e) {
     $statusCode = $e->getCode();
     $responseBody = $e->getResponseBody();

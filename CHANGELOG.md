@@ -22,15 +22,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Expand test coverage: model mapping tests, exception handling tests, logger integration, timeout configuration, billing API tests, webhook verification tests
 - Add new endpoints and models: Account (balance, turnover), PublicKey, Statements, Client CRUD, Webhook list/update, Purchase resend invoice
 - Add `ClientRecurringToken`, `ClientRecurringTokenList`, `CompanyStatement`, `CompanyStatementList`, `WebhookList` models
+- Add `Chip\Http\ClientInterface` internal HTTP abstraction with `GuzzleClient` implementation
+- Add `RetryClient` decorator with exponential backoff for 429/5xx responses
+- Add resource classes: `PurchasesResource`, `ClientsResource`, `WebhooksResource`, `PaymentMethodsResource`, `AccountResource`, `StatementsResource`, `PublicKeyResource`, `BillingResource`
+- Add `fromArray()` static factory methods to all models replacing JsonMapper
+- Add pagination iterators (`iterate()`, `iterateTemplates()`, `iterateClients()`) for list endpoints
 
 ### Changed
 
 - **Bump PHP requirement from `>=7.2.0` to `^8.1`**
+- **Rewrite `ChipApi` from trait-based architecture to resource-based architecture** (`$chip->purchases->create()` instead of `$chip->createPurchase()`)
+- **Replace JsonMapper with typed `fromArray()` static factory methods on all models**
+- **Add automatic retry with exponential backoff for 429 and 5xx responses**
 - **Rewrite `ChipApi::request()` to catch Guzzle HTTP exceptions and throw domain-specific exceptions**
 - Upgrade PHPUnit to ^10.5, PHPStan to ^2.1, PHP-CS-Fixer to ^3.95
 - Rewrite README with badges, quick-start, API reference, error handling docs
+- Rewrite MIGRATION.md with resource API migration guide and pagination docs
 - Add CONTRIBUTING.md with development workflow guidelines
 - Update CLAUDE.md with new commands and architecture details
+
+### Removed
+
+- Remove `netresearch/jsonmapper` dependency
+- Remove `Chip\Traits\Api\*` traits (`Purchase`, `PaymentMethod`, `Client`, `Webhook`, `Billing`, `PublicKey`, `Account`, `Statements`)
 
 ### Fixed
 

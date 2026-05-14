@@ -44,6 +44,22 @@ class PaymentMethods implements \JsonSerializable
      */
     public $logos;
 
+    /**
+     * @param array<string, mixed> $data
+     */
+    public static function fromArray(array $data): self
+    {
+        $methods = new self();
+        $methods->available_payment_methods = $data['available_payment_methods'] ?? [];
+        $methods->by_country = $data['by_country'] ?? [];
+        $methods->country_names = $data['country_names'] ?? [];
+        $methods->names = $data['names'] ?? [];
+        $methods->card_methods = $data['card_methods'] ?? [];
+        $methods->logos = $data['logos'] ?? [];
+
+        return $methods;
+    }
+
     #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {

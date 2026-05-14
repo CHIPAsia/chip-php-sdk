@@ -36,7 +36,7 @@ use Chip\Exception\ServerException;
 use Chip\Exception\ClientException;
 
 try {
-    $purchase = $chip->getPurchase('nonexistent_id');
+    $purchase = $chip->purchases->get('nonexistent_id');
 } catch (NotFoundException $e) {
     $statusCode = $e->getCode(); // 404
     $body = $e->getResponseBody(); // decoded array
@@ -119,6 +119,97 @@ $status = $purchase->status_history[0]->status; // array access
 
 These are associative arrays, not sequential. Access remains the same (`$methods->names['fpx']`), but type checks may differ.
 
+### Resource-Based Client API
+
+The biggest architectural change in 2.0.0 is the move from monolithic trait-based methods on `ChipApi` to dedicated resource objects:
+
+**Before (1.x):**
+
+```php
+$purchase = $chip->createPurchase($purchase);
+$client = $chip->createClient($clientDetails);
+$webhook = $chip->createWebhook($webhook);
+$methods = $chip->getPaymentMethods('MYR');
+$balance = $chip->getBalance();
+```
+
+**After (2.0.0):**
+
+```php
+$purchase = $chip->purchases->create($purchase);
+$client = $chip->clients->create($clientDetails);
+$webhook = $chip->webhooks->create($webhook);
+$methods = $chip->paymentMethods->list('MYR');
+$balance = $chip->account->balance();
+```
+
+Available resources:
+
+| Resource | Old Method | New Method |
+|----------|-----------|------------|
+| `purchases` | `createPurchase()` | `create()` |
+| `purchases` | `getPurchase()` | `get()` |
+| `purchases` | `cancelPurchase()` | `cancel()` |
+| `purchases` | `releasePurchase()` | `release()` |
+| `purchases` | `capturePurchase()` | `capture()` |
+| `purchases` | `chargePurchase()` | `charge()` |
+| `purchases` | `refundPurchase()` | `refund()` |
+| `purchases` | `deleteRecurringToken()` | `deleteRecurringToken()` |
+| `purchases` | `markAsPaid()` | `markAsPaid()` |
+| `purchases` | `resendInvoice()` | `resendInvoice()` |
+| `clients` | `createClient()` | `create()` |
+| `clients` | `getClient()` | `get()` |
+| `clients` | `getClients()` | `list()` |
+| `clients` | `updateClient()` | `update()` |
+| `clients` | `partialUpdateClient()` | `partialUpdate()` |
+| `clients` | `deleteClient()` | `delete()` |
+| `clients` | `listRecurringTokens()` | `listRecurringTokens()` |
+| `clients` | `getRecurringToken()` | `getRecurringToken()` |
+| `clients` | `deleteRecurringTokenByClient()` | `deleteRecurringToken()` |
+| `webhooks` | `createWebhook()` | `create()` |
+| `webhooks` | `getWebhook()` | `get()` |
+| `webhooks` | `listWebhooks()` | `list()` |
+| `webhooks` | `updateWebhook()` | `update()` |
+| `webhooks` | `partialUpdateWebhook()` | `partialUpdate()` |
+| `webhooks` | `deleteWebhook()` | `delete()` |
+| `paymentMethods` | `getPaymentMethods()` | `list()` |
+| `publicKey` | `getPublicKey()` | `get()` |
+| `account` | `getBalance()` | `balance()` |
+| `account` | `getTurnover()` | `turnover()` |
+| `statements` | `scheduleStatement()` | `schedule()` |
+| `statements` | `listStatements()` | `list()` |
+| `statements` | `getStatement()` | `get()` |
+| `statements` | `cancelStatement()` | `cancel()` |
+| `billing` | `createBilling()` | `create()` |
+| `billing` | `createBillingTemplate()` | `createTemplate()` |
+| `billing` | `getBillingTemplates()` | `listTemplates()` |
+| `billing` | `getBillingTemplate()` | `getTemplate()` |
+| `billing` | `updateBillingTemplate()` | `updateTemplate()` |
+| `billing` | `deleteBillingTemplate()` | `deleteTemplate()` |
+| `billing` | `sendBillingTemplateInvoice()` | `sendInvoice()` |
+| `billing` | `addBillingTemplateSubscriber()` | `addSubscriber()` |
+| `billing` | `getBillingTemplateClients()` | `listClients()` |
+| `billing` | `getBillingTemplateClient()` | `getClient()` |
+| `billing` | `updateBillingTemplateClient()` | `updateClient()` |
+
+### Pagination Iterators
+
+List endpoints now support automatic pagination iterators:
+
+```php
+foreach ($chip->clients->iterate() as $client) {
+    echo $client->email;
+}
+
+foreach ($chip->webhooks->iterate() as $webhook) {
+    echo $webhook->title;
+}
+
+foreach ($chip->billing->iterateTemplates() as $template) {
+    echo $template->title;
+}
+```
+
 ### New Optional Constructor Parameter
 
 `ChipApi` now accepts an optional PSR-3 logger as the 5th parameter:
@@ -140,11 +231,12 @@ Existing 3-argument constructor calls remain backward-compatible.
 Version 2.0.0 adds several new endpoints and helpers that were not available in 1.x:
 
 - `PurchaseBuilder` fluent API
-- `Account` endpoints: `getBalance()`, `getTurnover()`
-- `PublicKey` endpoint: `getPublicKey()`
-- `Statements` endpoints: `scheduleStatement()`, `listStatements()`, `getStatement()`, `cancelStatement()`
-- Expanded `Client` endpoints: `getClient()`, `updateClient()`, `partialUpdateClient()`, `deleteClient()`, `listRecurringTokens()`, `getRecurringToken()`, `deleteRecurringTokenByClient()`
-- Expanded `Webhook` endpoints: `listWebhooks()`, `updateWebhook()`, `partialUpdateWebhook()`
-- `Purchase::resendInvoice()`
+- `Account` endpoints: `$chip->account->balance()`, `$chip->account->turnover()`
+- `PublicKey` endpoint: `$chip->publicKey->get()`
+- `Statements` endpoints: `$chip->statements->schedule()`, `$chip->statements->list()`, `$chip->statements->get()`, `$chip->statements->cancel()`
+- Expanded `Client` endpoints: `$chip->clients->get()`, `$chip->clients->update()`, `$chip->clients->partialUpdate()`, `$chip->clients->delete()`, `$chip->clients->listRecurringTokens()`, `$chip->clients->getRecurringToken()`, `$chip->clients->deleteRecurringToken()`
+- Expanded `Webhook` endpoints: `$chip->webhooks->list()`, `$chip->webhooks->update()`, `$chip->webhooks->partialUpdate()`
+- `$chip->purchases->resendInvoice()`
+- Automatic retry with exponential backoff for 429 and 5xx responses
 
 These are purely additive — no existing code needs to change unless you want to use them.

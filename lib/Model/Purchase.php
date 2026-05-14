@@ -318,6 +318,84 @@ class Purchase implements \JsonSerializable
      */
     public $tags;
 
+    /**
+     * @param array<string, mixed> $data
+     */
+    public static function fromArray(array $data): self
+    {
+        $purchase = new self();
+        $purchase->id = $data['id'] ?? '';
+
+        if (isset($data['client']) && is_array($data['client'])) {
+            $purchase->client = ClientDetails::fromArray($data['client']);
+        }
+
+        if (isset($data['purchase']) && is_array($data['purchase'])) {
+            $purchase->purchase = PurchaseDetails::fromArray($data['purchase']);
+        }
+
+        if (isset($data['payment']) && is_array($data['payment'])) {
+            $purchase->payment = PaymentDetails::fromArray($data['payment']);
+        }
+
+        if (isset($data['issuer_details']) && is_array($data['issuer_details'])) {
+            $purchase->issuer_details = IssuerDetails::fromArray($data['issuer_details']);
+        }
+
+        $purchase->transaction_data = isset($data['transaction_data']) ? (object) $data['transaction_data'] : new \stdClass();
+        $purchase->status = $data['status'] ?? '';
+        $purchase->status_history = array_map(
+            fn (array $h) => (object) $h,
+            $data['status_history'] ?? []
+        );
+        $purchase->viewed_on = $data['viewed_on'] ?? 0;
+        $purchase->company_id = $data['company_id'] ?? '';
+        $purchase->is_test = $data['is_test'] ?? false;
+        $purchase->user_id = $data['user_id'] ?? '';
+        $purchase->brand_id = $data['brand_id'] ?? '';
+        $purchase->billing_template_id = $data['billing_template_id'] ?? '';
+        $purchase->client_id = $data['client_id'] ?? '';
+        $purchase->send_receipt = $data['send_receipt'] ?? false;
+        $purchase->is_recurring_token = $data['is_recurring_token'] ?? false;
+        $purchase->recurring_token = $data['recurring_token'] ?? '';
+        $purchase->force_recurring = $data['force_recurring'] ?? false;
+        $purchase->skip_capture = $data['skip_capture'] ?? false;
+        $purchase->reference_generated = $data['reference_generated'] ?? '';
+        $purchase->reference = $data['reference'] ?? '';
+        $purchase->issued = $data['issued'] ?? null;
+        $purchase->due = $data['due'] ?? 0;
+        $purchase->refund_availability = $data['refund_availability'] ?? '';
+        $purchase->refundable_amount = $data['refundable_amount'] ?? 0;
+        $purchase->currency_conversion = isset($data['currency_conversion']) ? (object) $data['currency_conversion'] : new \stdClass();
+        $purchase->payment_method_whitelist = $data['payment_method_whitelist'] ?? [];
+        $purchase->success_redirect = $data['success_redirect'] ?? '';
+        $purchase->failure_redirect = $data['failure_redirect'] ?? '';
+        $purchase->cancel_redirect = $data['cancel_redirect'] ?? '';
+        $purchase->success_callback = $data['success_callback'] ?? '';
+        $purchase->creator_agent = $data['creator_agent'] ?? '';
+        $purchase->platform = $data['platform'] ?? '';
+        $purchase->product = $data['product'] ?? '';
+        $purchase->created_from_ip = $data['created_from_ip'] ?? '';
+        $purchase->invoice_url = $data['invoice_url'] ?? '';
+        $purchase->checkout_url = $data['checkout_url'] ?? '';
+        $purchase->direct_post_url = $data['direct_post_url'] ?? '';
+        $purchase->notes = $data['notes'] ?? null;
+        $purchase->marked_as_paid = $data['marked_as_paid'] ?? false;
+        $purchase->order_id = $data['order_id'] ?? null;
+        $purchase->upsell_campaigns = $data['upsell_campaigns'] ?? [];
+        $purchase->referral_campaign_id = $data['referral_campaign_id'] ?? null;
+        $purchase->referral_code = $data['referral_code'] ?? null;
+        $purchase->referral_code_details = isset($data['referral_code_details']) ? (object) $data['referral_code_details'] : null;
+        $purchase->referral_code_generated = $data['referral_code_generated'] ?? null;
+        $purchase->retain_level_details = isset($data['retain_level_details']) ? (object) $data['retain_level_details'] : null;
+        $purchase->can_retrieve = $data['can_retrieve'] ?? false;
+        $purchase->can_chargeback = $data['can_chargeback'] ?? false;
+        $purchase->can_reverse_chargeback = $data['can_reverse_chargeback'] ?? false;
+        $purchase->tags = $data['tags'] ?? [];
+
+        return $purchase;
+    }
+
     #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {

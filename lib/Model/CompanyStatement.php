@@ -43,6 +43,29 @@ class CompanyStatement implements \JsonSerializable
     /** @var int|null */
     public $finished_on;
 
+    /**
+     * @param array<string, mixed> $data
+     */
+    public static function fromArray(array $data): self
+    {
+        $statement = new self();
+        $statement->type = $data['type'] ?? null;
+        $statement->id = $data['id'] ?? null;
+        $statement->created_on = $data['created_on'] ?? null;
+        $statement->updated_on = $data['updated_on'] ?? null;
+        $statement->format = $data['format'] ?? null;
+        $statement->timezone = $data['timezone'] ?? null;
+        $statement->is_test = $data['is_test'] ?? null;
+        $statement->company_uid = $data['company_uid'] ?? null;
+        $statement->query_string = $data['query_string'] ?? null;
+        $statement->status = $data['status'] ?? null;
+        $statement->download_url = $data['download_url'] ?? null;
+        $statement->began_on = $data['began_on'] ?? null;
+        $statement->finished_on = $data['finished_on'] ?? null;
+
+        return $statement;
+    }
+
     #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {

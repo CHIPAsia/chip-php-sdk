@@ -39,6 +39,23 @@ class Product implements \JsonSerializable
      */
     public $total_price_override;
 
+    /**
+     * @param array<string, mixed> $data
+     */
+    public static function fromArray(array $data): self
+    {
+        $product = new self();
+        $product->name = $data['name'] ?? null;
+        $product->quantity = $data['quantity'] ?? null;
+        $product->price = $data['price'] ?? null;
+        $product->discount = $data['discount'] ?? null;
+        $product->tax_percent = $data['tax_percent'] ?? null;
+        $product->category = $data['category'] ?? null;
+        $product->total_price_override = $data['total_price_override'] ?? null;
+
+        return $product;
+    }
+
     #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {

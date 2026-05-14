@@ -13,6 +13,22 @@ class WebhookList implements \JsonSerializable
     /** @var string|null */
     public $previous;
 
+    /**
+     * @param array<string, mixed> $data
+     */
+    public static function fromArray(array $data): self
+    {
+        $list = new self();
+        $list->results = array_map(
+            fn (array $w) => Webhook::fromArray($w),
+            $data['results'] ?? []
+        );
+        $list->next = $data['next'] ?? null;
+        $list->previous = $data['previous'] ?? null;
+
+        return $list;
+    }
+
     #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {

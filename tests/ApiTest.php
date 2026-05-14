@@ -17,7 +17,7 @@ final class ApiTest extends TestCase
         $api = $this->getMockApi(new MockHandler([
             new Response(200, [], '{}'),
         ]), $history);
-        $api->refundPurchase('123');
+        $api->purchases->refund('123');
         $transaction = $container[0];
 
         $this->assertEquals('POST', $transaction['request']->getMethod());
@@ -32,7 +32,7 @@ final class ApiTest extends TestCase
         $api = $this->getMockApi(new MockHandler([
             new Response(200, [], '{}'),
         ]), $history);
-        $api->refundPurchase('123', 100);
+        $api->purchases->refund('123', 100);
         $transaction = $container[0];
 
         $this->assertEquals('POST', $transaction['request']->getMethod());
@@ -48,7 +48,7 @@ final class ApiTest extends TestCase
         $api = $this->getMockApi(new MockHandler([
             new Response(200, [], '{}'),
         ]), $history);
-        $api->getPaymentMethods('MYR');
+        $api->paymentMethods->list('MYR');
         $transaction = $container[0];
 
         $this->assertEquals('GET', $transaction['request']->getMethod());
@@ -64,7 +64,7 @@ final class ApiTest extends TestCase
         $api = $this->getMockApi(new MockHandler([
             new Response(200, [], '{}'),
         ]), $history);
-        $api->createPurchase(new \Chip\Model\Purchase());
+        $api->purchases->create(new \Chip\Model\Purchase());
         $transaction = $container[0];
 
         $this->assertEquals('POST', $transaction['request']->getMethod());
@@ -78,7 +78,7 @@ final class ApiTest extends TestCase
         $api = $this->getMockApi(new MockHandler([
             new Response(200, [], '{}'),
         ]), $history);
-        $api->getPurchase('123');
+        $api->purchases->get('123');
         $transaction = $container[0];
 
         $this->assertEquals('GET', $transaction['request']->getMethod());
@@ -92,7 +92,7 @@ final class ApiTest extends TestCase
         $api = $this->getMockApi(new MockHandler([
             new Response(200, [], '{}'),
         ]), $history);
-        $api->cancelPurchase('123');
+        $api->purchases->cancel('123');
         $transaction = $container[0];
 
         $this->assertEquals('POST', $transaction['request']->getMethod());
@@ -106,7 +106,7 @@ final class ApiTest extends TestCase
         $api = $this->getMockApi(new MockHandler([
             new Response(200, [], '{}'),
         ]), $history);
-        $api->releasePurchase('123');
+        $api->purchases->release('123');
         $transaction = $container[0];
 
         $this->assertEquals('POST', $transaction['request']->getMethod());
@@ -120,7 +120,7 @@ final class ApiTest extends TestCase
         $api = $this->getMockApi(new MockHandler([
             new Response(200, [], '{}'),
         ]), $history);
-        $api->capturePurchase('123');
+        $api->purchases->capture('123');
         $transaction = $container[0];
 
         $this->assertEquals('POST', $transaction['request']->getMethod());
@@ -135,7 +135,7 @@ final class ApiTest extends TestCase
         $api = $this->getMockApi(new MockHandler([
             new Response(200, [], '{}'),
         ]), $history);
-        $api->capturePurchase('123', 100);
+        $api->purchases->capture('123', 100);
         $transaction = $container[0];
 
         $this->assertEquals('POST', $transaction['request']->getMethod());
@@ -151,7 +151,7 @@ final class ApiTest extends TestCase
         $api = $this->getMockApi(new MockHandler([
             new Response(200, [], '{}'),
         ]), $history);
-        $api->chargePurchase('123', 'token');
+        $api->purchases->charge('123', 'token');
         $transaction = $container[0];
 
         $this->assertEquals('POST', $transaction['request']->getMethod());
@@ -167,7 +167,7 @@ final class ApiTest extends TestCase
         $api = $this->getMockApi(new MockHandler([
             new Response(200, [], '{}'),
         ]), $history);
-        $api->deleteRecurringToken('123');
+        $api->purchases->deleteRecurringToken('123');
         $transaction = $container[0];
 
         $this->assertEquals('POST', $transaction['request']->getMethod());
@@ -206,7 +206,7 @@ final class ApiTest extends TestCase
             new Response(200, [], $responseBody),
         ]), Middleware::history($container));
 
-        $purchase = $api->getPurchase('purchase_123');
+        $purchase = $api->purchases->get('purchase_123');
 
         $this->assertInstanceOf(\Chip\Model\Purchase::class, $purchase);
         $this->assertEquals('purchase_123', $purchase->id);
@@ -232,7 +232,7 @@ final class ApiTest extends TestCase
             new Response(401, [], $this->jsonResponse(['detail' => 'Invalid API key'])),
         ]), Middleware::history($container));
 
-        $api->getPurchase('123');
+        $api->purchases->get('123');
     }
 
     public function testNotFoundException(): void
@@ -245,7 +245,7 @@ final class ApiTest extends TestCase
             new Response(404, [], $this->jsonResponse(['detail' => 'Purchase not found'])),
         ]), Middleware::history($container));
 
-        $api->getPurchase('123');
+        $api->purchases->get('123');
     }
 
     public function testValidationException(): void
@@ -258,7 +258,7 @@ final class ApiTest extends TestCase
             new Response(422, [], $this->jsonResponse(['detail' => 'Validation failed', 'errors' => ['email' => 'Required']])),
         ]), Middleware::history($container));
 
-        $api->createPurchase(new \Chip\Model\Purchase());
+        $api->purchases->create(new \Chip\Model\Purchase());
     }
 
     public function testServerException(): void
@@ -269,9 +269,12 @@ final class ApiTest extends TestCase
         $container = [];
         $api = $this->getMockApi(new MockHandler([
             new Response(500, [], $this->jsonResponse(['detail' => 'Internal server error'])),
+            new Response(500, [], $this->jsonResponse(['detail' => 'Internal server error'])),
+            new Response(500, [], $this->jsonResponse(['detail' => 'Internal server error'])),
+            new Response(500, [], $this->jsonResponse(['detail' => 'Internal server error'])),
         ]), Middleware::history($container));
 
-        $api->getPurchase('123');
+        $api->purchases->get('123');
     }
 
     public function testValidationExceptionExposesErrors(): void
@@ -282,7 +285,7 @@ final class ApiTest extends TestCase
                 new Response(422, [], $this->jsonResponse(['detail' => 'Validation failed', 'errors' => ['email' => 'Required', 'amount' => 'Must be positive']])),
             ]), Middleware::history($container));
 
-            $api->createPurchase(new \Chip\Model\Purchase());
+            $api->purchases->create(new \Chip\Model\Purchase());
             $this->fail('Expected ValidationException');
         } catch (\Chip\Exception\ValidationException $e) {
             $this->assertEquals(['email' => 'Required', 'amount' => 'Must be positive'], $e->getErrors());
@@ -299,7 +302,7 @@ final class ApiTest extends TestCase
 
         $client = new \Chip\Model\ClientDetails();
         $client->email = 'test@example.com';
-        $api->createClient($client);
+        $api->clients->create($client);
         $transaction = $container[0];
 
         $this->assertEquals('POST', $transaction['request']->getMethod());
@@ -317,7 +320,7 @@ final class ApiTest extends TestCase
         $webhook = new \Chip\Model\Webhook();
         $webhook->title = 'Test Webhook';
         $webhook->callback = 'https://example.com/webhook';
-        $api->createWebhook($webhook);
+        $api->webhooks->create($webhook);
         $transaction = $container[0];
 
         $this->assertEquals('POST', $transaction['request']->getMethod());
@@ -332,7 +335,7 @@ final class ApiTest extends TestCase
             new Response(200, [], '{}'),
         ]), $history);
 
-        $api->getWebhook('wh_123');
+        $api->webhooks->get('wh_123');
         $transaction = $container[0];
 
         $this->assertEquals('GET', $transaction['request']->getMethod());
@@ -346,7 +349,7 @@ final class ApiTest extends TestCase
         $api = $this->getMockApi(new MockHandler([
             new Response(200, [], '{}'),
         ]), $history);
-        $api->markAsPaid('123');
+        $api->purchases->markAsPaid('123');
         $transaction = $container[0];
 
         $this->assertEquals('POST', $transaction['request']->getMethod());
@@ -360,7 +363,7 @@ final class ApiTest extends TestCase
         $api = $this->getMockApi(new MockHandler([
             new Response(200, [], '{}'),
         ]), $history);
-        $api->markAsPaid('123', 1642060235);
+        $api->purchases->markAsPaid('123', 1642060235);
         $transaction = $container[0];
 
         $this->assertEquals('POST', $transaction['request']->getMethod());
@@ -384,7 +387,7 @@ final class ApiTest extends TestCase
             new Response(200, [], $responseBody),
         ]), Middleware::history($container));
 
-        $methods = $api->getPaymentMethods('MYR');
+        $methods = $api->paymentMethods->list('MYR');
 
         $this->assertInstanceOf(\Chip\Model\PaymentMethods::class, $methods);
         $this->assertEquals(['card', 'fpx'], $methods->available_payment_methods);
@@ -410,7 +413,7 @@ final class ApiTest extends TestCase
             new Response(200, [], $responseBody),
         ]), Middleware::history($container));
 
-        $webhook = $api->getWebhook('wh_123');
+        $webhook = $api->webhooks->get('wh_123');
 
         $this->assertInstanceOf(\Chip\Model\Webhook::class, $webhook);
         $this->assertEquals('wh_123', $webhook->id);
@@ -439,7 +442,7 @@ final class ApiTest extends TestCase
 
         $client = new \Chip\Model\ClientDetails();
         $client->email = 'test@example.com';
-        $result = $api->createClient($client);
+        $result = $api->clients->create($client);
 
         $this->assertInstanceOf(\Chip\Model\ClientDetails::class, $result);
     }
@@ -462,7 +465,7 @@ final class ApiTest extends TestCase
         ], $logger);
 
         try {
-            $api->getPurchase('123');
+            $api->purchases->get('123');
             $this->fail('Expected AuthenticationException');
         } catch (\Chip\Exception\AuthenticationException $e) {
             // expected
@@ -483,7 +486,7 @@ final class ApiTest extends TestCase
             'timeout' => 60,
         ]);
 
-        $api->getPurchase('123');
+        $api->purchases->get('123');
         $transaction = $container[0];
 
         $this->assertEquals(60, $transaction['options']['timeout']);
@@ -508,7 +511,7 @@ final class ApiTest extends TestCase
 
         $billing = new \Chip\Model\Billing\BillingTemplate();
         $billing->brand_id = 'brand_123';
-        $api->createBilling($billing);
+        $api->billing->create($billing);
         $transaction = $container[0];
 
         $this->assertEquals('POST', $transaction['request']->getMethod());
@@ -525,7 +528,7 @@ final class ApiTest extends TestCase
 
         $billing = new \Chip\Model\Billing\BillingTemplate();
         $billing->brand_id = 'brand_123';
-        $api->createBillingTemplate($billing);
+        $api->billing->createTemplate($billing);
         $transaction = $container[0];
 
         $this->assertEquals('POST', $transaction['request']->getMethod());
@@ -540,7 +543,7 @@ final class ApiTest extends TestCase
             new Response(200, [], '{}'),
         ]), $history);
 
-        $api->getBillingTemplates();
+        $api->billing->listTemplates();
         $transaction = $container[0];
 
         $this->assertEquals('GET', $transaction['request']->getMethod());
@@ -555,7 +558,7 @@ final class ApiTest extends TestCase
             new Response(200, [], '{}'),
         ]), $history);
 
-        $api->getBillingTemplate('bt_123');
+        $api->billing->getTemplate('bt_123');
         $transaction = $container[0];
 
         $this->assertEquals('GET', $transaction['request']->getMethod());
@@ -572,7 +575,7 @@ final class ApiTest extends TestCase
 
         $billing = new \Chip\Model\Billing\BillingTemplate();
         $billing->title = 'Updated';
-        $api->updateBillingTemplate('bt_123', $billing);
+        $api->billing->updateTemplate('bt_123', $billing);
         $transaction = $container[0];
 
         $this->assertEquals('PUT', $transaction['request']->getMethod());
@@ -587,7 +590,7 @@ final class ApiTest extends TestCase
             new Response(200, [], '{}'),
         ]), $history);
 
-        $api->deleteBillingTemplate('bt_123');
+        $api->billing->deleteTemplate('bt_123');
         $transaction = $container[0];
 
         $this->assertEquals('DELETE', $transaction['request']->getMethod());
@@ -604,7 +607,7 @@ final class ApiTest extends TestCase
 
         $client = new \Chip\Model\Billing\BillingTemplateClient();
         $client->client_id = 'client_123';
-        $api->sendBillingTemplateInvoice('bt_123', $client);
+        $api->billing->sendInvoice('bt_123', $client);
         $transaction = $container[0];
 
         $this->assertEquals('POST', $transaction['request']->getMethod());
@@ -621,7 +624,7 @@ final class ApiTest extends TestCase
 
         $client = new \Chip\Model\Billing\BillingTemplateClient();
         $client->client_id = 'client_123';
-        $api->addBillingTemplateSubscriber('bt_123', $client);
+        $api->billing->addSubscriber('bt_123', $client);
         $transaction = $container[0];
 
         $this->assertEquals('POST', $transaction['request']->getMethod());
@@ -636,7 +639,7 @@ final class ApiTest extends TestCase
             new Response(200, [], '{}'),
         ]), $history);
 
-        $api->getBillingTemplateClients('bt_123');
+        $api->billing->listClients('bt_123');
         $transaction = $container[0];
 
         $this->assertEquals('GET', $transaction['request']->getMethod());
@@ -651,7 +654,7 @@ final class ApiTest extends TestCase
             new Response(200, [], '{}'),
         ]), $history);
 
-        $api->getBillingTemplateClient('bt_123', 'bc_456');
+        $api->billing->getClient('bt_123', 'bc_456');
         $transaction = $container[0];
 
         $this->assertEquals('GET', $transaction['request']->getMethod());
@@ -668,7 +671,7 @@ final class ApiTest extends TestCase
 
         $client = new \Chip\Model\Billing\BillingTemplateClient();
         $client->status = 'active';
-        $api->updateBillingTemplateClient('bt_123', 'bc_456', $client);
+        $api->billing->updateClient('bt_123', 'bc_456', $client);
         $transaction = $container[0];
 
         $this->assertEquals('PATCH', $transaction['request']->getMethod());
@@ -683,7 +686,7 @@ final class ApiTest extends TestCase
             new Response(200, [], '{}'),
         ]), $history);
 
-        $api->getClients();
+        $api->clients->list();
         $transaction = $container[0];
 
         $this->assertEquals('GET', $transaction['request']->getMethod());
@@ -697,8 +700,7 @@ final class ApiTest extends TestCase
         $api = $this->getMockApi(new MockHandler([
             new Response(200, [], '{}'),
         ]), $history);
-
-        $api->resendInvoice('123');
+        $api->purchases->resendInvoice('123');
         $transaction = $container[0];
 
         $this->assertEquals('POST', $transaction['request']->getMethod());
@@ -713,7 +715,7 @@ final class ApiTest extends TestCase
             new Response(200, [], '{}'),
         ]), $history);
 
-        $api->getClient('client_123');
+        $api->clients->get('client_123');
         $transaction = $container[0];
 
         $this->assertEquals('GET', $transaction['request']->getMethod());
@@ -730,7 +732,7 @@ final class ApiTest extends TestCase
 
         $client = new \Chip\Model\ClientDetails();
         $client->email = 'updated@example.com';
-        $api->updateClient('client_123', $client);
+        $api->clients->update('client_123', $client);
         $transaction = $container[0];
 
         $this->assertEquals('PUT', $transaction['request']->getMethod());
@@ -747,7 +749,7 @@ final class ApiTest extends TestCase
 
         $client = new \Chip\Model\ClientDetails();
         $client->email = 'updated@example.com';
-        $api->partialUpdateClient('client_123', $client);
+        $api->clients->partialUpdate('client_123', $client);
         $transaction = $container[0];
 
         $this->assertEquals('PATCH', $transaction['request']->getMethod());
@@ -762,7 +764,7 @@ final class ApiTest extends TestCase
             new Response(204, [], ''),
         ]), $history);
 
-        $api->deleteClient('client_123');
+        $api->clients->delete('client_123');
         $transaction = $container[0];
 
         $this->assertEquals('DELETE', $transaction['request']->getMethod());
@@ -777,7 +779,7 @@ final class ApiTest extends TestCase
             new Response(200, [], '{}'),
         ]), $history);
 
-        $api->listRecurringTokens('client_123');
+        $api->clients->listRecurringTokens('client_123');
         $transaction = $container[0];
 
         $this->assertEquals('GET', $transaction['request']->getMethod());
@@ -792,7 +794,7 @@ final class ApiTest extends TestCase
             new Response(200, [], '{}'),
         ]), $history);
 
-        $api->getRecurringToken('client_123', 'purchase_456');
+        $api->clients->getRecurringToken('client_123', 'purchase_456');
         $transaction = $container[0];
 
         $this->assertEquals('GET', $transaction['request']->getMethod());
@@ -807,7 +809,7 @@ final class ApiTest extends TestCase
             new Response(204, [], ''),
         ]), $history);
 
-        $api->deleteRecurringTokenByClient('client_123', 'purchase_456');
+        $api->clients->deleteRecurringToken('client_123', 'purchase_456');
         $transaction = $container[0];
 
         $this->assertEquals('DELETE', $transaction['request']->getMethod());
@@ -822,7 +824,7 @@ final class ApiTest extends TestCase
             new Response(200, [], '{}'),
         ]), $history);
 
-        $api->listWebhooks();
+        $api->webhooks->list();
         $transaction = $container[0];
 
         $this->assertEquals('GET', $transaction['request']->getMethod());
@@ -839,7 +841,7 @@ final class ApiTest extends TestCase
 
         $webhook = new \Chip\Model\Webhook();
         $webhook->title = 'Updated';
-        $api->updateWebhook('wh_123', $webhook);
+        $api->webhooks->update('wh_123', $webhook);
         $transaction = $container[0];
 
         $this->assertEquals('PUT', $transaction['request']->getMethod());
@@ -856,7 +858,7 @@ final class ApiTest extends TestCase
 
         $webhook = new \Chip\Model\Webhook();
         $webhook->title = 'Updated';
-        $api->partialUpdateWebhook('wh_123', $webhook);
+        $api->webhooks->partialUpdate('wh_123', $webhook);
         $transaction = $container[0];
 
         $this->assertEquals('PATCH', $transaction['request']->getMethod());
@@ -871,7 +873,7 @@ final class ApiTest extends TestCase
             new Response(200, [], $this->jsonResponse(['public_key' => 'pk_test'])),
         ]), $history);
 
-        $key = $api->getPublicKey();
+        $key = $api->publicKey->get();
         $transaction = $container[0];
 
         $this->assertEquals('GET', $transaction['request']->getMethod());
@@ -887,7 +889,7 @@ final class ApiTest extends TestCase
             new Response(200, [], $this->jsonResponse(['MYR' => ['balance' => 100]])),
         ]), $history);
 
-        $result = $api->getBalance(['currency' => 'MYR']);
+        $result = $api->account->balance(['currency' => 'MYR']);
         $transaction = $container[0];
 
         $this->assertEquals('GET', $transaction['request']->getMethod());
@@ -904,7 +906,7 @@ final class ApiTest extends TestCase
             new Response(200, [], $this->jsonResponse(['incoming' => ['turnover' => 50], 'outgoing' => ['turnover' => 20]])),
         ]), $history);
 
-        $result = $api->getTurnover(['currency' => 'MYR', 'from' => 1609459200, 'to' => 1609545600]);
+        $result = $api->account->turnover(['currency' => 'MYR', 'from' => 1609459200, 'to' => 1609545600]);
         $transaction = $container[0];
 
         $this->assertEquals('GET', $transaction['request']->getMethod());
@@ -925,7 +927,7 @@ final class ApiTest extends TestCase
 
         $statement = new \Chip\Model\CompanyStatement();
         $statement->format = 'csv';
-        $api->scheduleStatement($statement);
+        $api->statements->schedule($statement);
         $transaction = $container[0];
 
         $this->assertEquals('POST', $transaction['request']->getMethod());
@@ -940,7 +942,7 @@ final class ApiTest extends TestCase
             new Response(200, [], '{}'),
         ]), $history);
 
-        $api->listStatements();
+        $api->statements->list();
         $transaction = $container[0];
 
         $this->assertEquals('GET', $transaction['request']->getMethod());
@@ -955,7 +957,7 @@ final class ApiTest extends TestCase
             new Response(200, [], '{}'),
         ]), $history);
 
-        $api->getStatement('stmt_123');
+        $api->statements->get('stmt_123');
         $transaction = $container[0];
 
         $this->assertEquals('GET', $transaction['request']->getMethod());
@@ -970,7 +972,7 @@ final class ApiTest extends TestCase
             new Response(200, [], '{}'),
         ]), $history);
 
-        $api->cancelStatement('stmt_123');
+        $api->statements->cancel('stmt_123');
         $transaction = $container[0];
 
         $this->assertEquals('POST', $transaction['request']->getMethod());
@@ -985,7 +987,7 @@ final class ApiTest extends TestCase
             new Response(200, [], '{}'),
         ]), $history);
 
-        $api->getPaymentMethods('MYR', ['country' => 'MY', 'recurring' => true, 'amount' => 500]);
+        $api->paymentMethods->list('MYR', ['country' => 'MY', 'recurring' => true, 'amount' => 500]);
         $transaction = $container[0];
 
         $this->assertEquals('GET', $transaction['request']->getMethod());

@@ -1,125 +1,73 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Chip;
 
-use Chip\Exception\AuthenticationException;
-use Chip\Exception\ClientException;
-use Chip\Exception\NotFoundException;
-use Chip\Exception\ServerException;
-use Chip\Exception\ValidationException;
-use Chip\Traits\Api\Account;
-use Chip\Traits\Api\Billing;
-use Chip\Traits\Api\Client;
-use Chip\Traits\Api\PaymentMethod;
-use Chip\Traits\Api\PublicKey;
-use Chip\Traits\Api\Purchase;
-use Chip\Traits\Api\Statements;
-use Chip\Traits\Api\Webhook;
-use GuzzleHttp\Exception\ClientException as GuzzleClientException;
-use GuzzleHttp\Exception\ServerException as GuzzleServerException;
+use Chip\Http\ClientInterface;
+use Chip\Http\GuzzleClient;
+use Chip\Http\RetryClient;
+use Chip\Resource\AccountResource;
+use Chip\Resource\BillingResource;
+use Chip\Resource\ClientsResource;
+use Chip\Resource\PaymentMethodsResource;
+use Chip\Resource\PublicKeyResource;
+use Chip\Resource\PurchasesResource;
+use Chip\Resource\StatementsResource;
+use Chip\Resource\WebhooksResource;
 use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
 
 class ChipApi
 {
-    use Purchase;
-    use PaymentMethod;
-    use Client;
-    use Webhook;
-    use Billing;
-    use PublicKey;
-    use Account;
-    use Statements;
+    public readonly PurchasesResource $purchases;
 
-    protected \GuzzleHttp\Client $client;
+    public readonly ClientsResource $clients;
 
-    protected \JsonMapper $mapper;
+    public readonly WebhooksResource $webhooks;
 
-    protected LoggerInterface $logger;
+    public readonly PaymentMethodsResource $paymentMethods;
+
+    public readonly PublicKeyResource $publicKey;
+
+    public readonly AccountResource $account;
+
+    public readonly StatementsResource $statements;
+
+    public readonly BillingResource $billing;
 
     /**
      * @param array<string, mixed> $config
      */
     public function __construct(
-        protected string $brandId,
-        protected string  $apiKey,
-        protected string  $base = 'https://gate.chip-in.asia/api/v1/',
+        string $brandId,
+        string $apiKey,
+        string $base = 'https://gate.chip-in.asia/api/v1/',
         array $config = [],
-        ?LoggerInterface $logger = null
+        ?LoggerInterface $logger = null,
     ) {
-        $this->mapper = new \JsonMapper();
-        $this->mapper->bStrictNullTypes = false;
-        $this->mapper->bEnforceMapType = false;
-        $this->logger = $logger ?? new NullLogger();
+        $httpClient = $this->createHttpClient($apiKey, $base, $config, $logger);
 
-        $mergedConfig = array_merge([
-            'base_uri' => $this->base,
-            'timeout' => $config['timeout'] ?? 30,
-        ], $config);
-
-        $this->client = new \GuzzleHttp\Client($mergedConfig);
+        $this->purchases = new PurchasesResource($httpClient);
+        $this->clients = new ClientsResource($httpClient);
+        $this->webhooks = new WebhooksResource($httpClient);
+        $this->paymentMethods = new PaymentMethodsResource($httpClient, $brandId);
+        $this->publicKey = new PublicKeyResource($httpClient);
+        $this->account = new AccountResource($httpClient);
+        $this->statements = new StatementsResource($httpClient);
+        $this->billing = new BillingResource($httpClient);
     }
 
     /**
-     * @param array<string, mixed> $options
-     * @return mixed
+     * @param array<string, mixed> $config
      */
-    protected function request(string $method, string $endpoint, array $options = []): mixed
+    private function createHttpClient(string $apiKey, string $base, array $config, ?LoggerInterface $logger): ClientInterface
     {
-        $headers = [];
-        if ($this->apiKey) {
-            $headers['Authorization'] = 'Bearer ' . $this->apiKey;
-        }
+        $guzzleClient = new GuzzleClient($apiKey, $base, $config, $logger);
 
-        $mergedOptions = array_merge([
-            'headers' => $headers,
-        ], $options);
-
-        $this->logger->debug('CHIP API request', [
-            'method' => $method,
-            'endpoint' => $endpoint,
-        ]);
-
-        try {
-            $response = $this->client->request($method, $endpoint, $mergedOptions);
-        } catch (GuzzleClientException $e) {
-            $response = $e->getResponse();
-            $statusCode = $response->getStatusCode();
-            $body = json_decode((string) $response->getBody(), true) ?? [];
-            $message = $body['detail'] ?? $body['message'] ?? $e->getMessage();
-
-            $this->logger->error('CHIP API client error', [
-                'status' => $statusCode,
-                'message' => $message,
-            ]);
-
-            throw match ($statusCode) {
-                401 => new AuthenticationException($message, $statusCode, $body, $e),
-                404 => new NotFoundException($message, $statusCode, $body, $e),
-                422 => new ValidationException($message, $statusCode, $body, $e),
-                default => new ClientException($message, $statusCode, $body, $e),
-            };
-        } catch (GuzzleServerException $e) {
-            $response = $e->getResponse();
-            $statusCode = $response->getStatusCode();
-            $body = json_decode((string) $response->getBody(), true) ?? [];
-            $message = $body['detail'] ?? $body['message'] ?? $e->getMessage();
-
-            $this->logger->error('CHIP API server error', [
-                'status' => $statusCode,
-                'message' => $message,
-            ]);
-
-            throw new ServerException($message, $statusCode, $body, $e);
-        }
-
-        $body = (string) $response->getBody()->getContents();
-
-        return json_decode($body);
+        return new RetryClient($guzzleClient, 3, 1.0, $logger);
     }
 
     /**
-     *
      * @param string $content
      * @param string $signature
      * @param string $publicKey
