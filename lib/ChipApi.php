@@ -7,11 +7,14 @@ use Chip\Traits\Api\PaymentMethod;
 use Chip\Traits\Api\Client;
 use Chip\Traits\Api\Webhook;
 use Chip\Traits\Api\Billing;
+use Chip\Traits\Api\PublicKey;
+use Chip\Traits\Api\Account;
+use Chip\Traits\Api\Statements;
 
 class ChipApi
 {
 
-	use Purchase, PaymentMethod, Client, Webhook, Billing;
+	use Purchase, PaymentMethod, Client, Webhook, Billing, PublicKey, Account, Statements;
 
 	protected $client;
 

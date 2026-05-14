@@ -1,5 +1,6 @@
 {
     "name": "chip/chip-sdk-php",
+    "description": "PHP SDK for CHIP Payments API",
     "type": "library",
     "require": {
         "php": ">=8.0.0",
