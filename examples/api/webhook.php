@@ -12,7 +12,7 @@ $headers = getallheaders();
 $xSignature = $headers['X-Signature'];
 
 # Get public key via SDK
-$publicKey = $chip->getPublicKey();
+$publicKey = $chip->publicKey->get();
 
 $verify = \Chip\ChipApi::verify($post, $xSignature, $publicKey);
 

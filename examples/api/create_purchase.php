@@ -21,7 +21,7 @@ $purchase->success_redirect = $config['basedUrl'] . '/api/redirect.php?success=1
 $purchase->failure_redirect = $config['basedUrl'] . '/api/redirect.php?success=0';
 $purchase->success_callback = $config['basedUrl'] . '/api/callback.php';
 
-$result = $chip->createPurchase($purchase);
+$result = $chip->purchases->create($purchase);
 
 if ($result && $result->checkout_url) {
     // Redirect user to checkout
