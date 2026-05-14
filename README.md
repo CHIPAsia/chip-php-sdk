@@ -10,7 +10,7 @@ Official PHP SDK for [CHIP](https://chip-in.asia) payment platform.
 
 ## Requirements
 
-- PHP ^8.0
+- PHP ^8.1
 - Extensions: `curl`, `json`, `openssl`
 
 ## Prerequisite
@@ -110,28 +110,114 @@ $purchase = $chip->deleteRecurringToken('purchase_id');
 
 ```php
 $methods = $chip->getPaymentMethods('MYR');
+
+// Optional filters
+$methods = $chip->getPaymentMethods('MYR', [
+    'country' => 'MY',
+    'recurring' => true,
+    'amount' => 500,
+]);
 ```
 
 ### Clients
 
 ```php
+// Create a client
 $client = new \Chip\Model\ClientDetails();
 $client->email = 'customer@example.com';
-$result = $chip->createClient($client);
+$client->full_name = 'John Doe';
+$created = $chip->createClient($client);
+
+// List all clients
+$clients = $chip->getClients();
+
+// Retrieve a client
+$client = $chip->getClient($clientId);
+
+// Update a client
+$updated = $chip->updateClient($clientId, $client);
+
+// Partially update a client
+$updated = $chip->partialUpdateClient($clientId, $client);
+
+// Delete a client
+$chip->deleteClient($clientId);
+
+// List recurring tokens for a client
+$tokens = $chip->listRecurringTokens($clientId);
+
+// Get a specific recurring token
+$token = $chip->getRecurringToken($clientId, $purchaseId);
+
+// Delete a recurring token
+$chip->deleteRecurringTokenByClient($clientId, $purchaseId);
 ```
 
 ### Webhooks
 
 ```php
+// List all webhooks
+$webhooks = $chip->listWebhooks();
+
 // Create a webhook
 $webhook = new \Chip\Model\Webhook();
-$webhook->title = 'My Webhook';
-$webhook->callback = 'https://yourdomain.com/webhook';
-$webhook->events = ['purchase.paid', 'purchase.created'];
-$result = $chip->createWebhook($webhook);
+$webhook->url = 'https://yourdomain.com/webhook';
+$webhook->event_type = 'purchase.paid';
+$created = $chip->createWebhook($webhook);
 
 // Get webhook details
-$webhook = $chip->getWebhook('webhook_id');
+$webhook = $chip->getWebhook($webhookId);
+
+// Update a webhook
+$updated = $chip->updateWebhook($webhookId, $webhook);
+
+// Partially update a webhook
+$updated = $chip->partialUpdateWebhook($webhookId, $webhook);
+
+// Delete a webhook
+$chip->deleteWebhook($webhookId);
+```
+
+### Purchases
+
+```php
+// Resend an invoice
+$purchase = $chip->resendInvoice($purchaseId);
+```
+
+### Account
+
+```php
+// Get account balance (with optional filters)
+$balance = $chip->getBalance();
+$balance = $chip->getBalance(['currency' => 'MYR']);
+
+// Get account turnover
+$turnover = $chip->getTurnover(['from' => 1609459200, 'to' => 1640995200]);
+```
+
+### Statements
+
+```php
+// Schedule a company statement
+$statement = new \Chip\Model\CompanyStatement();
+$statement->format = 'csv';
+$scheduled = $chip->scheduleStatement($statement);
+
+// List statements
+$statements = $chip->listStatements();
+
+// Get a statement
+$statement = $chip->getStatement($statementId);
+
+// Cancel a statement
+$statement = $chip->cancelStatement($statementId);
+```
+
+### Public Key
+
+```php
+$publicKey = $chip->getPublicKey();
 ```
 
 ## Error Handling
