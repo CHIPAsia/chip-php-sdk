@@ -13,6 +13,10 @@ Official PHP SDK for [CHIP](https://chip-in.asia) payment platform.
 - PHP ^8.1
 - Extensions: `curl`, `json`, `openssl`
 
+## Upgrading from 1.x
+
+See [MIGRATION.md](MIGRATION.md) for a detailed guide on breaking changes when upgrading from 1.x to 2.0.0.
+
 ## Prerequisite
 
 Before you start, make sure you already have created `Brand ID` and `API Key` from your developer dashboard by logging-in into [merchant portal](https://gate.chip-in.asia/login).
@@ -23,7 +27,7 @@ The package is not yet published on Packagist. Install via VCS repository:
 
 ```bash
 composer config repositories.chip-sdk vcs https://github.com/CHIPAsia/chip-php-sdk.git
-composer require chip/chip-sdk-php:^1.2
+composer require chip/chip-sdk-php:^2.0
 ```
 
 ## Quick Start

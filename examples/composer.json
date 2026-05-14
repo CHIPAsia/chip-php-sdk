@@ -2,7 +2,7 @@
     "name": "chip/php-sdk-examples",
     "type": "library",
     "require": {
-        "chip/chip-sdk-php": "^1.2.0",
+        "chip/chip-sdk-php": "^2.0.0",
         "php": ">=8.1.0"
     },
     "license": "MIT",

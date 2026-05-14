@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.2.0] - 2026-05-14
+## [2.0.0] - 2026-05-14
 
 ### Added
 
@@ -20,12 +20,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add GitHub Actions PR summary automation via Ollama Cloud
 - Add GitHub Actions changelog validation and release automation
 - Expand test coverage: model mapping tests, exception handling tests, logger integration, timeout configuration, billing API tests, webhook verification tests
+- Add new endpoints and models: Account (balance, turnover), PublicKey, Statements, Client CRUD, Webhook list/update, Purchase resend invoice
+- Add `ClientRecurringToken`, `ClientRecurringTokenList`, `CompanyStatement`, `CompanyStatementList`, `WebhookList` models
 
 ### Changed
 
-- Bump PHP requirement from `>=7.2.0` to `^8.1`
+- **Bump PHP requirement from `>=7.2.0` to `^8.1`**
+- **Rewrite `ChipApi::request()` to catch Guzzle HTTP exceptions and throw domain-specific exceptions**
 - Upgrade PHPUnit to ^10.5, PHPStan to ^2.1, PHP-CS-Fixer to ^3.95
-- Rewrite `ChipApi::request()` to catch Guzzle HTTP exceptions and throw domain-specific exceptions
 - Rewrite README with badges, quick-start, API reference, error handling docs
 - Add CONTRIBUTING.md with development workflow guidelines
 - Update CLAUDE.md with new commands and architecture details
@@ -36,6 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix existing tests to pass correct types (string IDs, `Purchase` objects)
 - Add property and return types to billing models and traits for PHPStan level 8 compliance
 - Fix composer.json missing required `description` field for strict validation
+- Fix model properties to match OpenAPI spec: `Product::quantity`, `Product::tax_percent` are now `string|null`; `Purchase::issued` is now `string|null`; `Purchase::status_history` is now `array`
 
 ## [1.1.3] - 2024-03-12
 
@@ -111,8 +114,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `verify()` static method for webhook signature verification using RSA-SHA256
 - Basic test suite with Guzzle `MockHandler`
 
-[Unreleased]: https://github.com/CHIPAsia/chip-php-sdk/compare/v1.2.0...HEAD
-[1.2.0]: https://github.com/CHIPAsia/chip-php-sdk/compare/v1.1.3...v1.2.0
+[Unreleased]: https://github.com/CHIPAsia/chip-php-sdk/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/CHIPAsia/chip-php-sdk/compare/v1.1.3...v2.0.0
 [1.1.3]: https://github.com/CHIPAsia/chip-php-sdk/compare/v1.1.2...v1.1.3
 [1.1.2]: https://github.com/CHIPAsia/chip-php-sdk/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/CHIPAsia/chip-php-sdk/compare/v1.1.0...v1.1.1
