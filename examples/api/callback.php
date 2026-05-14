@@ -1,27 +1,20 @@
 <?php
 
-  require_once '../vendor/autoload.php';
+require_once '../vendor/autoload.php';
 
-  $config = include('../config.php');
+$config = include('../config.php');
 
-  $chip = new \Chip\ChipApi($config['brand_id'], $config['api_key'], $config['endpoint']);
+$chip = new \Chip\ChipApi($config['brand_id'], $config['api_key'], $config['endpoint']);
 
-  # Option 1: Use success_callback parameter of the Purchase object
-  $post = file_get_contents('php://input'); # lib/Model/Purchase.php
-  $headers = getallheaders();
-  $xSignature = $headers["X-Signature"];
+# Use SDK instead of raw curl
+$publicKey = $chip->getPublicKey();
 
-  # GET PUBLIC KEY
-  $url = $config['endpoint'] . "public_key/";
-  $curl = curl_init($url);
-  curl_setopt($curl, CURLOPT_URL, $url);
-  curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-  $headers = array(
-    "Authorization: Bearer " . $config['api_key'],
-  );
-  curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-  $publicKey = json_decode(curl_exec($curl));
-  curl_close($curl);
+$post = file_get_contents('php://input');
+$headers = getallheaders();
+$xSignature = $headers['X-Signature'];
 
-  $verify = \Chip\ChipApi::verify($post, $xSignature, $publicKey);
-  error_log("/callback VERIFIED: " . ($verify ? "true" : "false"));
+$verify = \Chip\ChipApi::verify($post, $xSignature, $publicKey);
+
+$data = json_decode($post);
+error_log('/callback EVENT: ' . $data->event_type);
+error_log('/callback VERIFIED: ' . ($verify ? 'true' : 'false'));

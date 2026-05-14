@@ -4,6 +4,7 @@ vendor/
 # misc
 composer.lock
 .DS_Store
+.php-cs-fixer.cache
 
 # text editor settings
 .vscode/

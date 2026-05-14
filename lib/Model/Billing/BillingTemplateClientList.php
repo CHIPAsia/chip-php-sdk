@@ -4,19 +4,33 @@ namespace Chip\Model\Billing;
 
 class BillingTemplateClientList implements \JsonSerializable
 {
+    /** @var BillingTemplateClient[]|null */
+    public $results;
 
-  /**
-   *
-   * @var BillingTemplateClient[]
-   */
-  public $results;
+    /** @var string|null */
+    public $next;
 
-  public $next;
-  public $previous;
+    /** @var string|null */
+    public $previous;
 
-  #[\ReturnTypeWillChange]
-  public function jsonSerialize()
-  {
-    return array_filter((array) $this);
-  }
+    /**
+     * @param array<string, mixed> $data
+     */
+    public static function fromArray(array $data): self
+    {
+        $list = new self();
+        $list->results = isset($data['results']) && is_array($data['results'])
+            ? array_map(fn (array $r) => BillingTemplateClient::fromArray($r), $data['results'])
+            : null;
+        $list->next = $data['next'] ?? null;
+        $list->previous = $data['previous'] ?? null;
+
+        return $list;
+    }
+
+    #[\ReturnTypeWillChange]
+    public function jsonSerialize()
+    {
+        return array_filter((array) $this);
+    }
 }
