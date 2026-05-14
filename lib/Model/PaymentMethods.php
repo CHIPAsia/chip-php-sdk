@@ -39,7 +39,8 @@ class PaymentMethods implements \JsonSerializable
 
     /**
      *
-     * @var array<string, mixed>|null
+     * @var array
+     * @phpstan-var array<string, string|string[]>
      */
     public $logos;
 

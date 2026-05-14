@@ -91,7 +91,8 @@ class PurchaseDetails implements \JsonSerializable
 
     /**
      *
-     * @var array<int, mixed>
+     * @var array
+     * @phpstan-var array<int, mixed>
      */
     public $shipping_options;
 

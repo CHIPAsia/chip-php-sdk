@@ -48,7 +48,8 @@ class Purchase implements \JsonSerializable
 
     /**
      *
-     * @var array<int, object>
+     * @var array
+     * @phpstan-var array<int, \stdClass>
      */
     public $status_history;
 
@@ -258,7 +259,8 @@ class Purchase implements \JsonSerializable
 
     /**
      *
-     * @var array<int, mixed>
+     * @var array
+     * @phpstan-var array<int, mixed>
      */
     public $upsell_campaigns;
 
