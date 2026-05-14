@@ -6,8 +6,6 @@ $config = include('../config.php');
 
 $chip = new \Chip\ChipApi($config['brand_id'], $config['api_key'], $config['endpoint']);
 
-# Get public key via SDK
-$publicKey = $chip->getPublicKey();
+$balance = $chip->getBalance();
 
-header('Content-Type: application/json');
-echo json_encode(['public_key' => $publicKey]);
+echo "<pre><code>" . json_encode($balance, JSON_PRETTY_PRINT) . "</code></pre>";
