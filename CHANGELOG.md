@@ -73,14 +73,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add missing endpoints for full CHIP Collect API parity: Account (balance, turnover), PublicKey, Statements (list, schedule), Client CRUD, Webhook list/update, Purchase resend invoice, Purchase delete recurring token
-- Add `ClientDetails`, `ClientList`, `ClientRecurringToken`, `ClientRecurringTokenList`, `CompanyStatement`, `CompanyStatementList`, `WebhookList`, `PublicKey` models
+- Add `ClientRecurringToken`, `ClientRecurringTokenList`, `CompanyStatement`, `CompanyStatementList`, `WebhookList`, `PublicKey` models
 - Add `getClient()` method to `Client` trait
 
 ### Fixed
 
-- Fix model properties to match OpenAPI spec: `Product::quantity`, `Product::tax_percent` are now `string|null`; `Purchase::issued` is now `string|null`; `Purchase::status_history` is now `array`
-- Fix implicitly nullable parameter warnings by using explicit nullable types (`?int`)
 - Fix composer.json missing required `description` field for strict validation
+- Add missing `PaymentMethods::$logo` property alongside existing `$logos`
 
 ## [1.1.3] - 2024-03-12
 
