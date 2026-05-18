@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.2] - 2026-05-18
+
 ### Added
 
 - Expand `PurchaseBuilder` fluent API with all missing CHIP Collect fields
@@ -163,7 +165,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `verify()` static method for webhook signature verification using RSA-SHA256
 - Basic test suite with Guzzle `MockHandler`
 
-[Unreleased]: https://github.com/CHIPAsia/chip-php-sdk/compare/v2.0.1...HEAD
+[Unreleased]: https://github.com/CHIPAsia/chip-php-sdk/compare/v2.0.2...HEAD
+[2.0.2]: https://github.com/CHIPAsia/chip-php-sdk/compare/v2.0.1...v2.0.2
 [2.0.1]: https://github.com/CHIPAsia/chip-php-sdk/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/CHIPAsia/chip-php-sdk/compare/v1.2.1...v2.0.0
 [1.2.1]: https://github.com/CHIPAsia/chip-php-sdk/compare/v1.2.0...v1.2.1
