@@ -80,20 +80,6 @@ final class PurchaseBuilderTest extends TestCase
         $this->assertEquals(['visa', 'mastercard'], $purchase->payment_method_whitelist);
     }
 
-    public function testNullableTopLevelFields(): void
-    {
-        $purchase = \Chip\Builder\PurchaseBuilder::create()
-            ->brandId('brand_123')
-            ->clientId(null)
-            ->issued(null)
-            ->due(null)
-            ->build();
-
-        $this->assertNull($purchase->client_id);
-        $this->assertNull($purchase->issued);
-        $this->assertNull($purchase->due);
-    }
-
     public function testPurchaseDetailsFields(): void
     {
         $purchase = \Chip\Builder\PurchaseBuilder::create()
@@ -133,27 +119,6 @@ final class PurchaseBuilderTest extends TestCase
         $this->assertTrue($purchase->purchase->has_upsell_products);
         $this->assertTrue($purchase->purchase->single_attempt);
         $this->assertEquals((object)['order_id' => '123'], $purchase->purchase->metadata);
-    }
-
-    public function testNullablePurchaseDetailsFields(): void
-    {
-        $purchase = \Chip\Builder\PurchaseBuilder::create()
-            ->brandId('brand_123')
-            ->subtotalOverride(null)
-            ->totalTaxOverride(null)
-            ->totalDiscountOverride(null)
-            ->totalOverride(null)
-            ->paymentMethodDetails(null)
-            ->metadata(null)
-            ->addProduct('Test', 1000)
-            ->build();
-
-        $this->assertNull($purchase->purchase->subtotal_override);
-        $this->assertNull($purchase->purchase->total_tax_override);
-        $this->assertNull($purchase->purchase->total_discount_override);
-        $this->assertNull($purchase->purchase->total_override);
-        $this->assertNull($purchase->purchase->payment_method_details);
-        $this->assertNull($purchase->purchase->metadata);
     }
 
     public function testClientDetailsFields(): void

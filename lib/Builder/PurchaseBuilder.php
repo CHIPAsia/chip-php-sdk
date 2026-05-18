@@ -29,7 +29,7 @@ class PurchaseBuilder
         return $this;
     }
 
-    public function clientId(?string $clientId): self
+    public function clientId(string $clientId): self
     {
         $this->purchase->client_id = $clientId;
 
@@ -85,7 +85,7 @@ class PurchaseBuilder
         return $this;
     }
 
-    public function due(?int $due): self
+    public function due(int $due): self
     {
         $this->purchase->due = $due;
 
@@ -106,6 +106,9 @@ class PurchaseBuilder
         return $this;
     }
 
+    /**
+     * @param string[] $tags
+     */
     public function tags(array $tags): self
     {
         $this->purchase->tags = $tags;
@@ -253,6 +256,9 @@ class PurchaseBuilder
         return $this;
     }
 
+    /**
+     * @param string[] $cc
+     */
     public function clientCc(array $cc): self
     {
         $this->ensureClient();
@@ -261,6 +267,9 @@ class PurchaseBuilder
         return $this;
     }
 
+    /**
+     * @param string[] $bcc
+     */
     public function clientBcc(array $bcc): self
     {
         $this->ensureClient();
@@ -354,34 +363,37 @@ class PurchaseBuilder
         return $this;
     }
 
-    public function subtotalOverride(?int $subtotalOverride): self
+    public function subtotalOverride(int $subtotalOverride): self
     {
         $this->purchase->purchase->subtotal_override = $subtotalOverride;
 
         return $this;
     }
 
-    public function totalTaxOverride(?int $totalTaxOverride): self
+    public function totalTaxOverride(int $totalTaxOverride): self
     {
         $this->purchase->purchase->total_tax_override = $totalTaxOverride;
 
         return $this;
     }
 
-    public function totalDiscountOverride(?int $totalDiscountOverride): self
+    public function totalDiscountOverride(int $totalDiscountOverride): self
     {
         $this->purchase->purchase->total_discount_override = $totalDiscountOverride;
 
         return $this;
     }
 
-    public function totalOverride(?int $totalOverride): self
+    public function totalOverride(int $totalOverride): self
     {
         $this->purchase->purchase->total_override = $totalOverride;
 
         return $this;
     }
 
+    /**
+     * @param string[] $requestClientDetails
+     */
     public function requestClientDetails(array $requestClientDetails): self
     {
         $this->purchase->purchase->request_client_details = $requestClientDetails;
@@ -410,6 +422,9 @@ class PurchaseBuilder
         return $this;
     }
 
+    /**
+     * @param array<mixed> $shippingOptions
+     */
     public function shippingOptions(array $shippingOptions): self
     {
         $this->purchase->purchase->shipping_options = $shippingOptions;
@@ -445,6 +460,9 @@ class PurchaseBuilder
         return $this;
     }
 
+    /**
+     * @param string[] $methods
+     */
     public function paymentMethodWhitelist(array $methods): self
     {
         $this->purchase->payment_method_whitelist = $methods;

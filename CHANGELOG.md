@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Expand `PurchaseBuilder` fluent API with all missing CHIP Collect fields
+- Add top-level Purchase builder methods: `clientId`, `sendReceipt`, `skipCapture`, `forceRecurring`, `reference`, `issued`, `due`, `creatorAgent`, `platform`, `tags`
+- Add `PurchaseDetails` builder methods: `notes`, `debt`, `subtotalOverride`, `totalTaxOverride`, `totalDiscountOverride`, `totalOverride`, `requestClientDetails`, `timezone`, `dueStrict`, `emailMessage`, `shippingOptions`, `paymentMethodDetails`, `hasUpsellProducts`, `singleAttempt`, `metadata`
+- Add `ClientDetails` builder methods: `clientPersonalCode`, `clientStreetAddress`, `clientCountry`, `clientCity`, `clientZipCode`, `clientState`, `clientShippingStreetAddress`, `clientShippingCountry`, `clientShippingCity`, `clientShippingZipCode`, `clientShippingState`, `clientCc`, `clientBcc`, `clientLegalName`, `clientBrandName`, `clientRegistrationNumber`, `clientTaxNumber`, `clientBankAccount`, `clientBankCode`
+- Extend `addProduct()` with optional `$discount`, `$taxPercent`, `$category`, `$totalPriceOverride` parameters
+
 ## [2.0.1] - 2026-05-14
 
 ### Fixed
