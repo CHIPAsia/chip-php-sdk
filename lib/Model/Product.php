@@ -2,6 +2,9 @@
 
 namespace Chip\Model;
 
+use Chip\Exception\InvalidMoneyValueException;
+use Chip\Support\Money;
+
 class Product implements \JsonSerializable
 {
     /**
@@ -47,11 +50,11 @@ class Product implements \JsonSerializable
         $product = new self();
         $product->name = $data['name'] ?? null;
         $product->quantity = $data['quantity'] ?? null;
-        $product->price = $data['price'] ?? null;
-        $product->discount = $data['discount'] ?? null;
+        $product->price = isset($data['price']) ? Money::coerce($data['price']) : null;
+        $product->discount = isset($data['discount']) ? Money::coerce($data['discount']) : null;
         $product->tax_percent = $data['tax_percent'] ?? null;
         $product->category = $data['category'] ?? null;
-        $product->total_price_override = $data['total_price_override'] ?? null;
+        $product->total_price_override = isset($data['total_price_override']) ? Money::coerce($data['total_price_override']) : null;
 
         return $product;
     }
@@ -59,7 +62,22 @@ class Product implements \JsonSerializable
     #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
-        return array_filter((array) $this, [$this, 'allow_non_null']);
+        // Coerce at serialization time too: public properties mean callers may
+        // assign raw values (e.g. 0.29 * 100 float noise) directly without the
+        // builder. Money fields must reach the API as integers.
+        $data = (array) $this;
+
+        foreach (['price', 'discount', 'total_price_override'] as $moneyField) {
+            if ($data[$moneyField] !== null) {
+                try {
+                    $data[$moneyField] = Money::coerce($data[$moneyField]);
+                } catch (InvalidMoneyValueException $e) {
+                    throw new InvalidMoneyValueException("Product->{$moneyField}: " . $e->getMessage(), 0, $e);
+                }
+            }
+        }
+
+        return array_filter($data, [$this, 'allow_non_null']);
     }
 
     /**

@@ -6,6 +6,7 @@ namespace Chip\Resource;
 
 use Chip\Http\ClientInterface;
 use Chip\Model\Purchase;
+use Chip\Support\Money;
 
 final class PurchasesResource
 {
@@ -43,11 +44,11 @@ final class PurchasesResource
         return Purchase::fromArray((array) $response);
     }
 
-    public function capture(string $purchaseId, ?int $amount = null): Purchase
+    public function capture(string $purchaseId, int|float|string|null $amount = null): Purchase
     {
         $options = [];
         if ($amount !== null) {
-            $options['json'] = ['amount' => $amount];
+            $options['json'] = ['amount' => Money::coerce($amount)];
         }
 
         $response = $this->client->request('POST', "purchases/$purchaseId/capture/", $options);
@@ -71,11 +72,11 @@ final class PurchasesResource
         return Purchase::fromArray((array) $response);
     }
 
-    public function refund(string $purchaseId, ?int $amount = null): Purchase
+    public function refund(string $purchaseId, int|float|string|null $amount = null): Purchase
     {
         $options = [];
         if ($amount !== null) {
-            $options['json'] = ['amount' => $amount];
+            $options['json'] = ['amount' => Money::coerce($amount)];
         }
 
         $response = $this->client->request('POST', "purchases/$purchaseId/refund/", $options);

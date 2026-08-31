@@ -6,6 +6,7 @@ use Chip\Model\ClientDetails;
 use Chip\Model\Product;
 use Chip\Model\Purchase;
 use Chip\Model\PurchaseDetails;
+use Chip\Support\Money;
 
 class PurchaseBuilder
 {
@@ -328,21 +329,21 @@ class PurchaseBuilder
 
     public function addProduct(
         string $name,
-        int $price,
+        int|float|string $price,
         float|string $quantity = 1.0,
-        ?int $discount = null,
+        int|float|string|null $discount = null,
         ?string $taxPercent = null,
         ?string $category = null,
-        ?int $totalPriceOverride = null
+        int|float|string|null $totalPriceOverride = null
     ): self {
         $product = new Product();
         $product->name = $name;
-        $product->price = $price;
+        $product->price = Money::coerce($price);
         $product->quantity = is_string($quantity) ? $quantity : (string) $quantity;
-        $product->discount = $discount;
+        $product->discount = $discount === null ? null : Money::coerce($discount);
         $product->tax_percent = $taxPercent;
         $product->category = $category;
-        $product->total_price_override = $totalPriceOverride;
+        $product->total_price_override = $totalPriceOverride === null ? null : Money::coerce($totalPriceOverride);
 
         $this->purchase->purchase->products[] = $product;
 
@@ -356,37 +357,37 @@ class PurchaseBuilder
         return $this;
     }
 
-    public function debt(int $debt): self
+    public function debt(int|float|string $debt): self
     {
-        $this->purchase->purchase->debt = $debt;
+        $this->purchase->purchase->debt = Money::coerce($debt);
 
         return $this;
     }
 
-    public function subtotalOverride(int $subtotalOverride): self
+    public function subtotalOverride(int|float|string $subtotalOverride): self
     {
-        $this->purchase->purchase->subtotal_override = $subtotalOverride;
+        $this->purchase->purchase->subtotal_override = Money::coerce($subtotalOverride);
 
         return $this;
     }
 
-    public function totalTaxOverride(int $totalTaxOverride): self
+    public function totalTaxOverride(int|float|string $totalTaxOverride): self
     {
-        $this->purchase->purchase->total_tax_override = $totalTaxOverride;
+        $this->purchase->purchase->total_tax_override = Money::coerce($totalTaxOverride);
 
         return $this;
     }
 
-    public function totalDiscountOverride(int $totalDiscountOverride): self
+    public function totalDiscountOverride(int|float|string $totalDiscountOverride): self
     {
-        $this->purchase->purchase->total_discount_override = $totalDiscountOverride;
+        $this->purchase->purchase->total_discount_override = Money::coerce($totalDiscountOverride);
 
         return $this;
     }
 
-    public function totalOverride(int $totalOverride): self
+    public function totalOverride(int|float|string $totalOverride): self
     {
-        $this->purchase->purchase->total_override = $totalOverride;
+        $this->purchase->purchase->total_override = Money::coerce($totalOverride);
 
         return $this;
     }

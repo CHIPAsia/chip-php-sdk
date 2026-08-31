@@ -2,6 +2,9 @@
 
 namespace Chip\Model;
 
+use Chip\Exception\InvalidMoneyValueException;
+use Chip\Support\Money;
+
 class PurchaseDetails implements \JsonSerializable
 {
     /**
@@ -131,14 +134,14 @@ class PurchaseDetails implements \JsonSerializable
             fn (array $p) => Product::fromArray($p),
             $data['products'] ?? []
         );
-        $details->total = $data['total'] ?? 0;
+        $details->total = Money::coerce($data['total'] ?? 0);
         $details->language = $data['language'] ?? '';
         $details->notes = $data['notes'] ?? '';
-        $details->debt = $data['debt'] ?? 0;
-        $details->subtotal_override = $data['subtotal_override'] ?? 0;
-        $details->total_tax_override = $data['total_tax_override'] ?? 0;
-        $details->total_discount_override = $data['total_discount_override'] ?? 0;
-        $details->total_override = $data['total_override'] ?? 0;
+        $details->debt = Money::coerce($data['debt'] ?? 0);
+        $details->subtotal_override = Money::coerce($data['subtotal_override'] ?? 0);
+        $details->total_tax_override = Money::coerce($data['total_tax_override'] ?? 0);
+        $details->total_discount_override = Money::coerce($data['total_discount_override'] ?? 0);
+        $details->total_override = Money::coerce($data['total_override'] ?? 0);
         $details->request_client_details = $data['request_client_details'] ?? [];
         $details->timezone = $data['timezone'] ?? '';
         $details->due_strict = $data['due_strict'] ?? false;
@@ -155,6 +158,21 @@ class PurchaseDetails implements \JsonSerializable
     #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
-        return array_filter((array) $this);
+        // Coerce money fields at serialization time: callers may assign raw
+        // values (e.g. ringgit * 100 float noise) directly to the public
+        // properties. Money fields must reach the API as integers.
+        $data = (array) $this;
+
+        foreach (['total', 'debt', 'subtotal_override', 'total_tax_override', 'total_discount_override', 'total_override'] as $moneyField) {
+            if ($data[$moneyField] !== null) {
+                try {
+                    $data[$moneyField] = Money::coerce($data[$moneyField]);
+                } catch (InvalidMoneyValueException $e) {
+                    throw new InvalidMoneyValueException("PurchaseDetails->{$moneyField}: " . $e->getMessage(), 0, $e);
+                }
+            }
+        }
+
+        return array_filter($data);
     }
 }
