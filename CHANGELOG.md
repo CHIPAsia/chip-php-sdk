@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.0] - 2026-09-01
+
 ### Fixed
 
 - Coerce money fields (`price`, `discount`, `total_price_override`, capture/refund `amount`, `total`, `debt`, `subtotal_override`, `total_tax_override`, `total_discount_override`, `total_override`) to integers before API calls — floating point noise from `ringgit × 100` conversions (e.g. `0.29 * 100 = 28.999999999999996`) no longer produces fractional JSON that the API rejects with 400 "A valid integer is required."
@@ -16,6 +18,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `Chip\Support\Money::coerce()` shared money coercion helper
 - `Chip\Exception\InvalidMoneyValueException` for money values that cannot be safely sent to the API
+
+### Removed
+
+- Remove auto PR summary workflow and script (`pr-summary.yml`, `generate_pr_summary.py`) — the Ollama endpoint returns 410 Gone and the workflow overwrote PR descriptions with its error output
 
 ## [2.0.2] - 2026-05-18
 
