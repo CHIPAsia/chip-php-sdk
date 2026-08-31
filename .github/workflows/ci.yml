@@ -16,10 +16,10 @@ jobs:
     name: PHP ${{ matrix.php-version }}
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7.0.1
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@2.37.2
         with:
           php-version: ${{ matrix.php-version }}
           coverage: none
@@ -29,7 +29,7 @@ jobs:
 
       - name: Cache Composer packages
         id: composer-cache
-        uses: actions/cache@v5
+        uses: actions/cache@v6.1.0
         with:
           path: vendor
           key: ${{ runner.os }}-php-${{ matrix.php-version }}-${{ hashFiles('**/composer.lock') }}
@@ -47,10 +47,10 @@ jobs:
     name: Static Analysis
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7.0.1
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@2.37.2
         with:
           php-version: '8.1'
           coverage: none
@@ -66,10 +66,10 @@ jobs:
     name: Code Style
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7.0.1
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@2.37.2
         with:
           php-version: '8.1'
           coverage: none
