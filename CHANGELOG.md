@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Coerce money fields (`price`, `discount`, `total_price_override`, capture/refund `amount`, `total`, `debt`, `subtotal_override`, `total_tax_override`, `total_discount_override`, `total_override`) to integers before API calls — floating point noise from `ringgit × 100` conversions (e.g. `0.29 * 100 = 28.999999999999996`) no longer produces fractional JSON that the API rejects with 400 "A valid integer is required."
+- Values within 1e-9 of an integer are rounded to it; genuine fractional sen (e.g. `108.5`) now throws `InvalidMoneyValueException` instead of being silently truncated by the builder's implicit int cast (previously `28.999…` became `28` sen — a wrong charge amount)
+
+### Added
+
+- `Chip\Support\Money::coerce()` shared money coercion helper
+- `Chip\Exception\InvalidMoneyValueException` for money values that cannot be safely sent to the API
+
 ## [2.0.2] - 2026-05-18
 
 ### Added
