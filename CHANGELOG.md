@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `$chip->publicKey->get()` no longer throws `TypeError: Chip\Http\GuzzleClient::request(): Return value must be of type stdClass|array, string returned`. `GET /public_key/` answers with a JSON-encoded PEM string, so the HTTP client now returns decoded string bodies as-is and `PublicKeyResource::get()` returns the bare PEM, making it directly usable with `ChipApi::verify()`.
 - The HTTP client no longer discards non-JSON response bodies: plain-text bodies (e.g. a bare PEM) are returned as-is instead of being silently turned into an empty `stdClass`. Empty bodies still return `stdClass`.
 - `ClientInterface::request()` return type widened to `\stdClass|array<string, mixed>|string`; `BillingResource::create()` follows suit. Implementations that declare the narrower `\stdClass|array` remain valid (return type covariance).
+- Error responses no longer throw a `TypeError` when the failure body is not a JSON object: a `detail`/`message` that is a list or object is JSON-encoded into the exception message, and a JSON scalar or plain-text body is reported as an empty `getResponseBody()`. The failure stays a `ChipApiException`, so `catch (ChipApiException $e)` keeps working instead of dying on a type error.
+- Paginated `iterate()` loops only follow a real URL: `next: false` used to be a `TypeError` (`Argument #2 ($endpoint) must be of type string, false given`) and `next: ""` looped forever. Affects `webhooks`, `company_statements`, `billing_templates`, `billing_templates/{id}/clients` and `clients`.
 
 ## [2.1.0] - 2026-09-01
 

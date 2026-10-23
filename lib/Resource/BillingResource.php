@@ -59,7 +59,10 @@ final class BillingResource
                 yield $template;
             }
 
-            $url = $list->next;
+            // `next` is string|null per the API, but `false`/"" show up too:
+            // a non-string is a TypeError and an empty string loops forever.
+            $next = $list->next;
+            $url = is_string($next) && '' !== $next ? $next : null;
         }
     }
 
@@ -124,7 +127,10 @@ final class BillingResource
                 yield $client;
             }
 
-            $url = $list->next;
+            // `next` is string|null per the API, but `false`/"" show up too:
+            // a non-string is a TypeError and an empty string loops forever.
+            $next = $list->next;
+            $url = is_string($next) && '' !== $next ? $next : null;
         }
     }
 
