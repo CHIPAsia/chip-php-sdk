@@ -19,10 +19,13 @@ class CompanyStatementList implements \JsonSerializable
     public static function fromArray(array $data): self
     {
         $list = new self();
-        $list->results = array_map(
-            fn (array $s) => CompanyStatement::fromArray($s),
-            $data['results'] ?? []
-        );
+        $results = $data['results'] ?? [];
+        $list->results = is_array($results)
+            ? array_values(array_map(
+                fn (array $s) => CompanyStatement::fromArray($s),
+                array_filter($results, 'is_array')
+            ))
+            : [];
         $list->next = $data['next'] ?? null;
         $list->previous = $data['previous'] ?? null;
 

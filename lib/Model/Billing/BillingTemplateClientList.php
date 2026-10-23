@@ -19,8 +19,12 @@ class BillingTemplateClientList implements \JsonSerializable
     public static function fromArray(array $data): self
     {
         $list = new self();
-        $list->results = isset($data['results']) && is_array($data['results'])
-            ? array_map(fn (array $r) => BillingTemplateClient::fromArray($r), $data['results'])
+        $results = $data['results'] ?? null;
+        $list->results = is_array($results)
+            ? array_values(array_map(
+                fn (array $r) => BillingTemplateClient::fromArray($r),
+                array_filter($results, 'is_array')
+            ))
             : null;
         $list->next = $data['next'] ?? null;
         $list->previous = $data['previous'] ?? null;
