@@ -40,9 +40,9 @@ final class GuzzleClient implements ClientInterface
 
     /**
      * @param array<string, mixed> $options
-     * @return \stdClass|array<string, mixed>
+     * @return \stdClass|array<string, mixed>|string
      */
-    public function request(string $method, string $endpoint, array $options = []): \stdClass|array
+    public function request(string $method, string $endpoint, array $options = []): \stdClass|array|string
     {
         $headers = [];
         if ($this->apiKey) {
@@ -92,7 +92,17 @@ final class GuzzleClient implements ClientInterface
         }
 
         $body = (string) $response->getBody()->getContents();
+        $decoded = json_decode($body, true);
 
-        return json_decode($body, true) ?? new \stdClass();
+        if (is_array($decoded) || is_string($decoded)) {
+            return $decoded;
+        }
+
+        // Empty or non-array JSON body (e.g. `204 No Content`), or plain text
+        // such as a bare PEM: return the raw body instead of discarding it so
+        // plain-text endpoints stay usable, and keep `{}` for empty bodies.
+        $raw = trim($body);
+
+        return '' === $raw ? new \stdClass() : $raw;
     }
 }

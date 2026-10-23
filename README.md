@@ -243,7 +243,10 @@ $statement = $chip->statements->cancel($statementId);
 ### Public Key
 
 ```php
+// PEM public key for verifying callback signatures
 $publicKey = $chip->publicKey->get();
+
+$isValid = ChipApi::verify($callbackBody, $signatureHeader, $publicKey);
 ```
 
 ### Billing

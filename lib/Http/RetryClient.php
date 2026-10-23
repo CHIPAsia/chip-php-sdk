@@ -23,9 +23,9 @@ final class RetryClient implements ClientInterface
 
     /**
      * @param array<string, mixed> $options
-     * @return \stdClass|array<string, mixed>
+     * @return \stdClass|array<string, mixed>|string
      */
-    public function request(string $method, string $endpoint, array $options = []): \stdClass|array
+    public function request(string $method, string $endpoint, array $options = []): \stdClass|array|string
     {
         $attempt = 0;
 

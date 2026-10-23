@@ -19,9 +19,9 @@ final class BillingResource
     }
 
     /**
-     * @return array<string, mixed>|\stdClass
+     * @return array<string, mixed>|\stdClass|string
      */
-    public function create(BillingTemplate $billing): array|\stdClass
+    public function create(BillingTemplate $billing): array|\stdClass|string
     {
         return $this->client->request('POST', 'billing/', [
             'json' => $billing,
