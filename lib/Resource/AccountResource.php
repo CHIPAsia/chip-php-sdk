@@ -23,8 +23,11 @@ final class AccountResource
         ]);
 
         $json = json_encode($response);
+        $decoded = json_decode($json !== false ? $json : '[]', true);
 
-        return json_decode($json !== false ? $json : '[]', true);
+        // These endpoints answer with an object; a scalar or plain-text body must
+        // not turn into a TypeError from the declared array return type.
+        return is_array($decoded) ? $decoded : [];
     }
 
     /**
@@ -38,7 +41,10 @@ final class AccountResource
         ]);
 
         $json = json_encode($response);
+        $decoded = json_decode($json !== false ? $json : '[]', true);
 
-        return json_decode($json !== false ? $json : '[]', true);
+        // These endpoints answer with an object; a scalar or plain-text body must
+        // not turn into a TypeError from the declared array return type.
+        return is_array($decoded) ? $decoded : [];
     }
 }

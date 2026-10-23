@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Paginated list models no longer throw a `TypeError` when the gateway returns an entry that is not an object: `webhooks`, `company_statements`, `clients`, `client recurring tokens`, `billing_templates` and `billing template clients` now skip non-array entries instead of failing inside the `fromArray()` closure (`Argument #1 ($w) must be of type array, string given`).
+- `account->balance()` and `account->turnover()` return `[]` when the response is not an object, instead of a `TypeError` from the declared `array` return type (`Return value must be of type array, string returned`).
+
 ## [2.1.1] - 2026-10-23
 
 ### Fixed

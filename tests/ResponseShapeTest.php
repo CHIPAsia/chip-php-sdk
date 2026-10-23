@@ -176,4 +176,38 @@ final class ResponseShapeTest extends TestCase
 
         $this->assertSame([], iterator_to_array($api->clients->iterate()));
     }
+
+    public function testListSkipsNonArrayResults(): void
+    {
+        $api = $this->api([new Response(200, [], '{"results": ["x", {"id": "wh_1"}], "next": null, "previous": null}')]);
+
+        $list = $api->webhooks->list();
+
+        $this->assertIsArray($list->results);
+        $this->assertCount(1, $list->results);
+        $this->assertSame('wh_1', $list->results[0]->id);
+    }
+
+    public function testBillingTemplateListSkipsNonArrayResults(): void
+    {
+        $api = $this->api([new Response(200, [], '{"results": ["x"], "next": null, "previous": null}')]);
+
+        $list = $api->billing->listTemplates();
+
+        $this->assertSame([], $list->results);
+    }
+
+    public function testBalanceReturnsEmptyArrayForNonObjectBody(): void
+    {
+        $api = $this->api([new Response(200, [], '"not-an-object"')]);
+
+        $this->assertSame([], $api->account->balance());
+    }
+
+    public function testTurnoverReturnsEmptyArrayForNonObjectBody(): void
+    {
+        $api = $this->api([new Response(200, [], '"not-an-object"')]);
+
+        $this->assertSame([], $api->account->turnover());
+    }
 }
