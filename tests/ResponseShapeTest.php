@@ -118,4 +118,62 @@ final class ResponseShapeTest extends TestCase
 
         $this->assertSame(['wh_1', 'wh_2'], $ids);
     }
+
+    public function testErrorWithEmptyArrayDetailFallsBackToTransportMessage(): void
+    {
+        $api = $this->api([new Response(400, [], '{"detail": []}')]);
+
+        try {
+            $api->purchases->get('p1');
+            $this->fail('Expected ClientException');
+        } catch (\Chip\Exception\ClientException $e) {
+            $this->assertStringContainsString('400', $e->getMessage());
+            $this->assertSame(['detail' => []], $e->getResponseBody());
+        }
+    }
+
+    public function testErrorWithEmptyStringDetailFallsBackToTransportMessage(): void
+    {
+        $api = $this->api([new Response(400, [], '{"detail": ""}')]);
+
+        try {
+            $api->purchases->get('p1');
+            $this->fail('Expected ClientException');
+        } catch (\Chip\Exception\ClientException $e) {
+            $this->assertStringContainsString('400', $e->getMessage());
+        }
+    }
+
+    public function testErrorUsesMessageFieldWhenDetailMissing(): void
+    {
+        $api = $this->api([new Response(403, [], '{"message": ["blocked", "by", "rule"]}')]);
+
+        try {
+            $api->purchases->get('p1');
+            $this->fail('Expected ClientException');
+        } catch (\Chip\Exception\ClientException $e) {
+            $this->assertSame('["blocked","by","rule"]', $e->getMessage());
+        }
+    }
+
+    public function testStatementsIterateStopsOnNonStringNext(): void
+    {
+        $api = $this->api([new Response(200, [], '{"results": [], "next": false, "previous": null}')]);
+
+        $this->assertSame([], iterator_to_array($api->statements->iterate()));
+    }
+
+    public function testBillingClientsIterateStopsOnEmptyNext(): void
+    {
+        $api = $this->api([new Response(200, [], '{"results": [], "next": "", "previous": null}')]);
+
+        $this->assertSame([], iterator_to_array($api->billing->iterateClients('bt_1')));
+    }
+
+    public function testClientsIterateStopsOnNonStringNext(): void
+    {
+        $api = $this->api([new Response(200, [], '{"results": [], "next": false, "previous": null}')]);
+
+        $this->assertSame([], iterator_to_array($api->clients->iterate()));
+    }
 }

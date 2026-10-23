@@ -129,7 +129,7 @@ final class GuzzleClient implements ClientInterface
 
         if (is_string($detail) && '' !== $detail) {
             $message = $detail;
-        } elseif (is_array($detail)) {
+        } elseif (is_array($detail) && [] !== $detail) {
             $encoded = json_encode($detail, \JSON_UNESCAPED_SLASHES | \JSON_UNESCAPED_UNICODE);
             if (is_string($encoded)) {
                 $message = $encoded;
