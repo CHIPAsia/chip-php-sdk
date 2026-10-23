@@ -307,6 +307,7 @@ use Chip\Exception\NotFoundException;
 use Chip\Exception\ValidationException;
 use Chip\Exception\ServerException;
 use Chip\Exception\ClientException;
+use Chip\Exception\NetworkException;
 
 try {
     $purchase = $chip->purchases->get('nonexistent_id');
@@ -322,6 +323,8 @@ try {
     // 5xx - Server error
 } catch (ClientException $e) {
     // Other 4xx errors
+} catch (NetworkException $e) {
+    // DNS / connection / TLS / timeout — no HTTP response, getCode() is 0
 }
 ```
 
