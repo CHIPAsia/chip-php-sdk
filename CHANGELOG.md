@@ -7,10 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.0] - 2026-10-23
+
 ### Fixed
 
 - Paginated list models no longer throw a `TypeError` when the gateway returns an entry that is not an object: `webhooks`, `company_statements`, `clients`, `client recurring tokens`, `billing_templates` and `billing template clients` now skip non-array entries instead of failing inside the `fromArray()` closure (`Argument #1 ($w) must be of type array, string given`).
 - `account->balance()` and `account->turnover()` return `[]` when the response is not an object, instead of a `TypeError` from the declared `array` return type (`Return value must be of type array, string returned`).
+
+### Added
+
+- `Chip\Exception\NetworkException` — thrown when a request fails before any HTTP response exists (DNS failure, connection refused, TLS error, timeout). It extends `ChipApiException`, so `catch (ChipApiException $e)` now covers every failure the SDK can raise; previously the raw Guzzle transport exception escaped. `getCode()` is `0`, `getResponseBody()` is `null`, and the transport exception is available via `getPrevious()`. Network failures are deliberately **not** retried (a connection error on a `POST` may have reached the server).
 
 ## [2.1.1] - 2026-10-23
 

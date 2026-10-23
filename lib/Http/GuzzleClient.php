@@ -6,12 +6,14 @@ namespace Chip\Http;
 
 use Chip\Exception\AuthenticationException;
 use Chip\Exception\ClientException;
+use Chip\Exception\NetworkException;
 use Chip\Exception\NotFoundException;
 use Chip\Exception\ServerException;
 use Chip\Exception\ValidationException;
 use GuzzleHttp\Exception\ClientException as GuzzleClientException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ServerException as GuzzleServerException;
+use GuzzleHttp\Exception\TransferException;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -84,6 +86,15 @@ final class GuzzleClient implements ClientInterface
             ]);
 
             throw new ServerException($message, $statusCode, $body, $e);
+        } catch (TransferException $e) {
+            // No HTTP response existed: DNS failure, connection refused, TLS
+            // error or timeout. Without this the raw Guzzle exception escapes,
+            // so callers catching ChipApiException never see it.
+            $this->logger->error('CHIP API network error', [
+                'message' => $e->getMessage(),
+            ]);
+
+            throw new NetworkException('Network error: ' . $e->getMessage(), 0, null, $e);
         }
 
         $body = (string) $response->getBody()->getContents();
