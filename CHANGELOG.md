@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.1] - 2026-10-23
+
 ### Fixed
 
 - `$chip->publicKey->get()` no longer throws `TypeError: Chip\Http\GuzzleClient::request(): Return value must be of type stdClass|array, string returned`. `GET /public_key/` answers with a JSON-encoded PEM string, so the HTTP client now returns decoded string bodies as-is and `PublicKeyResource::get()` returns the bare PEM, making it directly usable with `ChipApi::verify()`.
