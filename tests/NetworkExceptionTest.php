@@ -26,7 +26,7 @@ final class NetworkExceptionTest extends TestCase
      */
     private function api(array $queue): array
     {
-        $counter = new class {
+        $counter = new class () {
             public int $count = 0;
         };
 
