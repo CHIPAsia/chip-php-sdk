@@ -45,7 +45,10 @@ final class WebhooksResource
                 yield $webhook;
             }
 
-            $url = $list->next;
+            // `next` is string|null per the API, but `false`/"" show up too:
+            // a non-string is a TypeError and an empty string loops forever.
+            $next = $list->next;
+            $url = is_string($next) && '' !== $next ? $next : null;
         }
     }
 

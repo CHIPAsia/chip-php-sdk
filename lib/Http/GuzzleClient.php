@@ -10,6 +10,7 @@ use Chip\Exception\NotFoundException;
 use Chip\Exception\ServerException;
 use Chip\Exception\ValidationException;
 use GuzzleHttp\Exception\ClientException as GuzzleClientException;
+use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ServerException as GuzzleServerException;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -40,9 +41,9 @@ final class GuzzleClient implements ClientInterface
 
     /**
      * @param array<string, mixed> $options
-     * @return \stdClass|array<string, mixed>
+     * @return \stdClass|array<string, mixed>|string
      */
-    public function request(string $method, string $endpoint, array $options = []): \stdClass|array
+    public function request(string $method, string $endpoint, array $options = []): \stdClass|array|string
     {
         $headers = [];
         if ($this->apiKey) {
@@ -61,10 +62,7 @@ final class GuzzleClient implements ClientInterface
         try {
             $response = $this->client->request($method, $endpoint, $mergedOptions);
         } catch (GuzzleClientException $e) {
-            $response = $e->getResponse();
-            $statusCode = $response->getStatusCode();
-            $body = json_decode((string) $response->getBody(), true) ?? [];
-            $message = $body['detail'] ?? $body['message'] ?? $e->getMessage();
+            [$statusCode, $body, $message] = $this->describeError($e);
 
             $this->logger->error('CHIP API client error', [
                 'status' => $statusCode,
@@ -78,10 +76,7 @@ final class GuzzleClient implements ClientInterface
                 default => new ClientException($message, $statusCode, $body, $e),
             };
         } catch (GuzzleServerException $e) {
-            $response = $e->getResponse();
-            $statusCode = $response->getStatusCode();
-            $body = json_decode((string) $response->getBody(), true) ?? [];
-            $message = $body['detail'] ?? $body['message'] ?? $e->getMessage();
+            [$statusCode, $body, $message] = $this->describeError($e);
 
             $this->logger->error('CHIP API server error', [
                 'status' => $statusCode,
@@ -92,7 +87,55 @@ final class GuzzleClient implements ClientInterface
         }
 
         $body = (string) $response->getBody()->getContents();
+        $decoded = json_decode($body, true);
 
-        return json_decode($body, true) ?? new \stdClass();
+        if (is_array($decoded) || is_string($decoded)) {
+            return $decoded;
+        }
+
+        // Empty or non-array JSON body (e.g. `204 No Content`), or plain text
+        // such as a bare PEM: return the raw body instead of discarding it so
+        // plain-text endpoints stay usable, and keep `{}` for empty bodies.
+        $raw = trim($body);
+
+        return '' === $raw ? new \stdClass() : $raw;
+    }
+
+    /**
+     * Normalise a failed response into `[status, body, message]`.
+     *
+     * A failure is not guaranteed to carry a JSON object: a proxy in front of the
+     * gateway can answer with a JSON scalar or plain text, and `detail`/`message`
+     * can themselves be a list or an object. Coercing here keeps the failure a
+     * `ChipApiException` instead of letting a typed constructor argument turn it
+     * into a `TypeError` the caller cannot catch as an API error.
+     *
+     * @return array{0: int, 1: array<string, mixed>, 2: string}
+     */
+    private function describeError(RequestException $e): array
+    {
+        $response = $e->getResponse();
+
+        if (null === $response) {
+            return [0, [], $e->getMessage()];
+        }
+
+        $statusCode = $response->getStatusCode();
+        $decoded = json_decode((string) $response->getBody(), true);
+        $body = is_array($decoded) ? $decoded : [];
+
+        $detail = $body['detail'] ?? $body['message'] ?? null;
+        $message = $e->getMessage();
+
+        if (is_string($detail) && '' !== $detail) {
+            $message = $detail;
+        } elseif (is_array($detail) && [] !== $detail) {
+            $encoded = json_encode($detail, \JSON_UNESCAPED_SLASHES | \JSON_UNESCAPED_UNICODE);
+            if (is_string($encoded)) {
+                $message = $encoded;
+            }
+        }
+
+        return [$statusCode, $body, $message];
     }
 }
