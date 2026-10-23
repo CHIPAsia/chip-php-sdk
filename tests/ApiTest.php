@@ -57,8 +57,8 @@ final class ApiTest extends TestCase
 
         $this->assertEquals('GET', $transaction['request']->getMethod());
         $this->assertStringContainsString('payment_methods/', $transaction['request']->getUri()->getPath());
-        $body = json_decode($transaction['request']->getBody()->getContents(), true);
         $this->assertStringContainsString('currency=MYR', $transaction['request']->getUri()->getQuery());
+        $this->assertEmpty($transaction['request']->getBody()->getContents());
     }
 
     public function testCreatePurchase(): void
@@ -949,6 +949,7 @@ final class ApiTest extends TestCase
         $result = $api->account->turnover(['currency' => 'MYR', 'from' => 1609459200, 'to' => 1609545600]);
         $transaction = $container[0];
 
+        $this->assertEquals(['incoming' => ['turnover' => 50], 'outgoing' => ['turnover' => 20]], $result);
         $this->assertEquals('GET', $transaction['request']->getMethod());
         $this->assertStringContainsString('account/json/turnover/', $transaction['request']->getUri()->getPath());
         $query = $transaction['request']->getUri()->getQuery();
